@@ -1,9 +1,12 @@
 package com.zzangho.project.springboot.config;
 
+import com.zzangho.project.springboot.config.auth.CertificationInterceptor;
 import com.zzangho.project.springboot.config.auth.LoginUserArgumentResolver;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -18,5 +21,21 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(loginUserArgumentResolver);
+    }
+
+    /*
+     * 로그인 인증 Interceptor 설정
+     * */
+    @Autowired
+    CertificationInterceptor certificationInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(certificationInterceptor)
+                .addPathPatterns("/*")
+                .excludePathPatterns("/user/**")
+                .excludePathPatterns("/js/**")
+                .excludePathPatterns("/css/**")
+                .excludePathPatterns("/vendor/**");
     }
 }

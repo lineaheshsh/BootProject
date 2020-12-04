@@ -1,0 +1,36 @@
+.btn-naver {
+    color: #fff;
+    background-color: #19ce60;
+    border-color: #15c654;
+}
+
+.btn-naver:hover {
+    color: #fff;
+    background-color: #077c12;
+    border-color: #e6e6e6;
+}
+
+.btn-naver:focus, .btn-naver.focus {
+    color: #fff;
+    background-color: #30497c;
+    border-color: #e6e6e6;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.5);
+}
+
+.btn-naver.disabled, .btn-naver:disabled {
+    color: #fff;
+    background-color: #19ce60;
+    border-color: #fff;
+}
+
+.btn-naver:not(:disabled):not(.disabled):active, .btn-naver:not(:disabled):not(.disabled).active,
+.show > .btn-naver.dropdown-toggle {
+    color: #fff;
+    background-color: #2d4373;
+    border-color: #dfdfdf;
+}
+
+.btn-naver:not(:disabled):not(.disabled):active:focus, .btn-naver:not(:disabled):not(.disabled).active:focus,
+.show > .btn-naver.dropdown-toggle:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.5);
+}

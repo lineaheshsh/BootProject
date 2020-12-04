@@ -22,7 +22,7 @@ public class IndexController {
     @GetMapping("/")
     public String index(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
-
+        System.out.println("index page!");
         if ( user != null ) {
             System.out.println(user.getName());
             model.addAttribute("name", user.getName());
@@ -41,5 +41,11 @@ public class IndexController {
         model.addAttribute("post", dto);
 
         return "posts-update";
+    }
+
+    @GetMapping("/user/login")
+    public String login() {
+        System.out.println("login page!");
+        return "login-page";
     }
 }
