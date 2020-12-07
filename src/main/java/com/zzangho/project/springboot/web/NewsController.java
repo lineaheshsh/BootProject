@@ -36,6 +36,8 @@ public class NewsController {
     public String newsList(@ModelAttribute Parameter parameter, Model model, @LoginUser SessionUser user) {
 
         Map<String, Object> resultMap = new HashMap<>();
+        long total = 0;
+
         List<News> politicsList = new ArrayList<>();
         List<News> economyList = new ArrayList<>();
         List<News> societyList = new ArrayList<>();
@@ -62,19 +64,42 @@ public class NewsController {
 
         // 키워드가 비어있을 경우 전체 검색
         if ( StringUtils.isEmpty(parameter.getKwd()) ) {
-            politicsSearchHit = eSservice.matchAll("naver_news", parameter, "정치");
-            economySearchHit = eSservice.matchAll("naver_news", parameter, "경제");
-            societySearchHit = eSservice.matchAll("naver_news", parameter, "사회");
-            cultureSearchHit = eSservice.matchAll("naver_news", parameter, "생활/문화");
-            worldSearchHit = eSservice.matchAll("naver_news", parameter, "세계");
-            itSearchHit = eSservice.matchAll("naver_news", parameter, "IT/과학");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "POLITICS".equals(parameter.getCategory()) )
+                politicsSearchHit = eSservice.matchAll("naver_news", parameter, "정치");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "ECONOMY".equals(parameter.getCategory()) )
+                economySearchHit = eSservice.matchAll("naver_news", parameter, "경제");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "SOCIETY".equals(parameter.getCategory()) )
+                societySearchHit = eSservice.matchAll("naver_news", parameter, "사회");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "CURTURE".equals(parameter.getCategory()) )
+                cultureSearchHit = eSservice.matchAll("naver_news", parameter, "생활/문화");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "WORLD".equals(parameter.getCategory()) )
+                worldSearchHit = eSservice.matchAll("naver_news", parameter, "세계");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "IT".equals(parameter.getCategory()) )
+                itSearchHit = eSservice.matchAll("naver_news", parameter, "IT/과학");
         } else {
-            politicsSearchHit = eSservice.boolQuery("naver_news", parameter, "정치");
-            economySearchHit = eSservice.boolQuery("naver_news", parameter, "경제");
-            societySearchHit = eSservice.boolQuery("naver_news", parameter, "사회");
-            cultureSearchHit = eSservice.boolQuery("naver_news", parameter, "생활/문화");
-            worldSearchHit = eSservice.boolQuery("naver_news", parameter, "세계");
-            itSearchHit = eSservice.boolQuery("naver_news", parameter, "IT/과학");
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "POLITICS".equals(parameter.getCategory()) )
+                politicsSearchHit = eSservice.boolQuery("naver_news", parameter, "정치");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "ECONOMY".equals(parameter.getCategory()) )
+                economySearchHit = eSservice.boolQuery("naver_news", parameter, "경제");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "SOCIETY".equals(parameter.getCategory()) )
+                societySearchHit = eSservice.boolQuery("naver_news", parameter, "사회");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "CURTURE".equals(parameter.getCategory()) )
+                cultureSearchHit = eSservice.boolQuery("naver_news", parameter, "생활/문화");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "WORLD".equals(parameter.getCategory()) )
+                worldSearchHit = eSservice.boolQuery("naver_news", parameter, "세계");
+
+            if ( StringUtils.isEmpty(parameter.getCategory()) || "IT".equals(parameter.getCategory()) )
+                itSearchHit = eSservice.boolQuery("naver_news", parameter, "IT/과학");
         }
 
         // 정치
@@ -100,7 +125,8 @@ public class NewsController {
                 news = null;
             }
 
-            model.addAttribute("politicsTotal", politicsSearchHit.getTotalHits());
+            total += politicsSearchHit.getTotalHits().value;
+            model.addAttribute("politicsTotal", politicsSearchHit.getTotalHits().value);
             model.addAttribute("politicsList", politicsList);
         }
 
@@ -127,7 +153,8 @@ public class NewsController {
                 news = null;
             }
 
-            model.addAttribute("economyTotal", economySearchHit.getTotalHits());
+            total += economySearchHit.getTotalHits().value;
+            model.addAttribute("economyTotal", economySearchHit.getTotalHits().value);
             model.addAttribute("economyList", economyList);
         }
 
@@ -154,7 +181,8 @@ public class NewsController {
                 news = null;
             }
 
-            model.addAttribute("societyTotal", societySearchHit.getTotalHits());
+            total += societySearchHit.getTotalHits().value;
+            model.addAttribute("societyTotal", societySearchHit.getTotalHits().value);
             model.addAttribute("societyList", societyList);
         }
 
@@ -181,7 +209,8 @@ public class NewsController {
                 news = null;
             }
 
-            model.addAttribute("cultureTotal", cultureSearchHit.getTotalHits());
+            total += cultureSearchHit.getTotalHits().value;
+            model.addAttribute("cultureTotal", cultureSearchHit.getTotalHits().value);
             model.addAttribute("cultureList", cultureList);
         }
 
@@ -208,7 +237,8 @@ public class NewsController {
                 news = null;
             }
 
-            model.addAttribute("worldTotal", worldSearchHit.getTotalHits());
+            total += worldSearchHit.getTotalHits().value;
+            model.addAttribute("worldTotal", worldSearchHit.getTotalHits().value);
             model.addAttribute("worldList", worldList);
         }
 
@@ -235,7 +265,8 @@ public class NewsController {
                 news = null;
             }
 
-            model.addAttribute("itTotal", itSearchHit.getTotalHits());
+            total += itSearchHit.getTotalHits().value;
+            model.addAttribute("itTotal", itSearchHit.getTotalHits().value);
             model.addAttribute("itList", itList);
         }
 
@@ -245,6 +276,8 @@ public class NewsController {
             model.addAttribute("name", user.getName()); // user name
         }
 
+        model.addAttribute("params", parameter);
+        model.addAttribute("total", total);
         model.addAttribute("pageNum", 0);
         model.addAttribute("limit", 10);
 
