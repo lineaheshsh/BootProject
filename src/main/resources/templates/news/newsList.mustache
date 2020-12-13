@@ -7,6 +7,8 @@
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
 
+        {{>common/hiddenForm}}
+
         <!-- Main Content -->
         <div id="content">
 
@@ -219,8 +221,53 @@
             <!-- Begin Page Content -->
             <div class="container-fluid">
 
+                <div class="card mb-4">
+                    <div class="card-header">검색 옵션</div>
+                    <div class="card-body">
+                        <!-- Option 1 - Company -->
+                        <h5 class="mb-1">신문사</h5>
+                        <form style="display: inline-block;">
+                            <div class="custom-control custom-checkbox search-option" style="float: left;">
+                                <input class="custom-control-input" id="totalCompany" type="checkbox" name="totalCompany" value="전체">
+                                <label class="custom-control-label" for="totalCompany">전체</label>
+                            </div>
+                            {{#companyList}}
+                            <div class="custom-control custom-checkbox search-option" style="float: left;">
+                                <input class="custom-control-input" id="{{company}}" type="checkbox" name="company" value="{{company}}">
+                                <label class="custom-control-label" for="{{company}}">{{company}}</label>
+                            </div>
+                            {{/companyList}}
+                        </form>
+                        <hr class="my-4">
+
+                        <!-- Option 2 - Order -->
+                        <h5 class="mb-1">정렬</h5>
+                        <form style="display: inline-flex;">
+                            <div class="custom-control custom-radio search-option">
+                                <input class="custom-control-input" id="radioPublic" type="radio" name="orderby" value="r">
+                                <label class="custom-control-label" for="radioPublic">정확도</label>
+                            </div>
+                            <div class="custom-control custom-radio search-option">
+                                <input class="custom-control-input" id="radioPublic2" type="radio" name="orderby" value="d">
+                                <label class="custom-control-label" for="radioPublic2">날짜순</label>
+                            </div>
+                        </form>
+                        <hr class="my-4">
+
+                        <!-- Data sharing options-->
+                        <form>
+                            <div class="input-group input-group-joined mb-4">
+                                <input class="form-control" type="text" placeholder="Search Keyword.." aria-label="Search" id="keyword" value="{{params.kwd}}">
+                                <div class="input-group-append" id="searchBtn">
+                                    <span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
                 <!-- Page Heading -->
-                <h1 class="h3 mb-2 text-gray-800">뉴스</h1>
+<!--                <h1 class="h3 mb-2 text-gray-800">""으로 검색한 결과는 총 00입니다.</h1>-->
 
                 <div class="card mb-4">
                     <div class="card-header border-bottom">
@@ -470,3 +517,4 @@
 <!-- End of Page Wrapper -->
 
 {{>layout/footer}}
+<script src="/js/app/news/news.js"></script>

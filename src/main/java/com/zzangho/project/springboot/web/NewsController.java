@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.lucene.search.TotalHits;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,6 +62,11 @@ public class NewsController {
         // limit이 비어있을 경우 10으로 셋팅
         if (StringUtils.isEmpty(parameter.getLimit()) ) {
             parameter.setLimit(10);
+        }
+
+        // orderby가 비어있을 경우 r으로 셋팅
+        if (StringUtils.isEmpty(parameter.getOrderby()) ) {
+            parameter.setOrderby("r");
         }
 
         // 키워드가 비어있을 경우 전체 검색
@@ -274,6 +281,25 @@ public class NewsController {
         if ( user != null ) {
             model.addAttribute("profile", user.getPicture());   // profile 사진
             model.addAttribute("name", user.getName()); // user name
+        }
+
+        Aggregations aggregations = eSservice.aggregation("naver_news");
+        if ( aggregations != null ) {
+            List<Map<String, Object>> companyList = new ArrayList<>();
+            Terms byCompanyAggregation = aggregations.get("by_company");
+
+            // For each entry
+            for (Terms.Bucket entry : byCompanyAggregation.getBuckets()) {
+                Map<String, Object> companyMap = new HashMap<>();
+                String key = entry.getKeyAsString();            // bucket key
+                long docCount = entry.getDocCount();            // Doc count
+
+                companyMap.put("company", key);
+                companyMap.put("count", docCount);
+                companyList.add(companyMap);
+                companyMap = null;
+            }
+            model.addAttribute("companyList", companyList);
         }
 
         model.addAttribute("params", parameter);
