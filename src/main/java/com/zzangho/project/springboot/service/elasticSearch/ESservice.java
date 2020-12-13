@@ -50,17 +50,26 @@ public class ESservice {
      */
     public SearchHits matchAll(String indexName, Parameter parameter, String category) {
 
+        BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery();
+
+        queryBuilders.must(QueryBuilders.matchAllQuery())
+                     .filter(QueryBuilders.termQuery("category_nm", category));
+
+        // 신문사 옵션이 전체가 아닌경우
+        if ( parameter.getCompany() != null && !"".equals(parameter.getCompany()) )
+            queryBuilders.filter(QueryBuilders.termsQuery("company", parameter.getCompany().split(",")));
+
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.boolQuery()
-                .must(QueryBuilders.matchAllQuery())
-                .filter(QueryBuilders.termQuery("category_nm", category))
-                .filter(QueryBuilders.termQuery("company", parameter.getCategory().replaceAll(",", " "))));
+        searchSourceBuilder.query(queryBuilders);
         searchSourceBuilder.from(parameter.getPageNum());
         searchSourceBuilder.size(parameter.getLimit());
-        searchSourceBuilder.sort(new FieldSortBuilder("udt_dt").order(SortOrder.DESC));
 
-        TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms("by_company").field("company");
-        searchSourceBuilder.aggregation(aggregationBuilder);
+        // 정렬
+        if ( "r".equals(parameter.getOrderby()) ) {
+            searchSourceBuilder.sort(new FieldSortBuilder("_score").order(SortOrder.DESC));
+        } else {
+            searchSourceBuilder.sort(new FieldSortBuilder("udt_dt").order(SortOrder.DESC));
+        }
 
         System.out.println(searchSourceBuilder.toString());
 
@@ -133,6 +142,8 @@ public class ESservice {
         // 키워드가 있을 경우
         if ( parameter.getKwd() != null && !"".equals(parameter.getKwd()) )
             queryBuilders.must(QueryBuilders.termQuery("title", parameter.getKwd()));
+
+        queryBuilders.filter(QueryBuilders.termQuery("category_nm", category));
 
         // 신문사 옵션이 전체가 아닌경우
         if ( parameter.getCompany() != null && !"".equals(parameter.getCompany()) )
