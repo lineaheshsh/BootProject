@@ -309,4 +309,35 @@ public class NewsController {
 
         return "news/newsList";
     }
+
+    @GetMapping("/newsAnalysis")
+    public String newsAnalysis(@ModelAttribute Parameter parameter, Model model, @LoginUser SessionUser user) {
+
+        Aggregations aggregations = eSservice.aggregation("naver_news");
+        if ( aggregations != null ) {
+            List<Map<String, Object>> companyList = new ArrayList<>();
+            Terms byCompanyAggregation = aggregations.get("by_company");
+
+            // For each entry
+            for (Terms.Bucket entry : byCompanyAggregation.getBuckets()) {
+                Map<String, Object> companyMap = new HashMap<>();
+                String key = entry.getKeyAsString();            // bucket key
+                long docCount = entry.getDocCount();            // Doc count
+
+                companyMap.put("company", key);
+                companyMap.put("count", docCount);
+                companyList.add(companyMap);
+                companyMap = null;
+            }
+            model.addAttribute("companyList", companyList);
+        }
+
+        // session값
+        if ( user != null ) {
+            model.addAttribute("profile", user.getPicture());   // profile 사진
+            model.addAttribute("name", user.getName()); // user name
+        }
+
+        return "news/newsAnalysis";
+    }
 }
