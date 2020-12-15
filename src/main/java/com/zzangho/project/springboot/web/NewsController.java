@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -313,9 +314,23 @@ public class NewsController {
     @GetMapping("/newsAnalysis")
     public String newsAnalysis(@ModelAttribute Parameter parameter, Model model, @LoginUser SessionUser user) {
 
+        // session값
+        if ( user != null ) {
+            model.addAttribute("profile", user.getPicture());   // profile 사진
+            model.addAttribute("name", user.getName()); // user name
+        }
+
+        return "news/newsAnalysis";
+    }
+
+    @ResponseBody
+    @GetMapping("/newsCompanyCount")
+    public List<Map<String, Object>> newsCompanyCount(@LoginUser SessionUser user) {
+
+        List<Map<String, Object>> companyList = new ArrayList<>();
         Aggregations aggregations = eSservice.aggregation("naver_news");
+
         if ( aggregations != null ) {
-            List<Map<String, Object>> companyList = new ArrayList<>();
             Terms byCompanyAggregation = aggregations.get("by_company");
 
             // For each entry
@@ -329,15 +344,8 @@ public class NewsController {
                 companyList.add(companyMap);
                 companyMap = null;
             }
-            model.addAttribute("companyList", companyList);
         }
 
-        // session값
-        if ( user != null ) {
-            model.addAttribute("profile", user.getPicture());   // profile 사진
-            model.addAttribute("name", user.getName()); // user name
-        }
-
-        return "news/newsAnalysis";
+        return companyList;
     }
 }
