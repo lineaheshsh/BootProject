@@ -21,12 +21,18 @@ var newsAnalysis_main = {
                 var _color = [];
 
                 $.each(data, function (index, item) {
-                    _title.push(item.company);
-                    _count.push(item.count);
+                    var _obj = {};
+                    _obj.name = item.company;
+                    _obj.y = item.count;
+                    _title.push(_obj);
+
+                    //_title.push(item.company);
+                    //_count.push(item.count);
                     // 랜덤 색상
                     _color.push('#'+Math.floor(Math.random()*16777215).toString(16));
                 });
 
+                /**
                 var myPieChart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
@@ -53,6 +59,42 @@ var newsAnalysis_main = {
                         },
                         cutoutPercentage: 80,
                     },
+                });
+                 **/
+
+                Highcharts.chart('donutChart', {
+                    chart: {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        type: 'pie'
+                    },
+                    title: {
+                        text: 'Browser market shares in January, 2018'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    accessibility: {
+                        point: {
+                            valueSuffix: '%'
+                        }
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: false
+                            },
+                            showInLegend: true
+                        }
+                    },
+                    series: [{
+                        name: 'Brands',
+                        colorByPoint: true,
+                        data: _title
+                    }]
                 });
             },
             error: function onError (error) {

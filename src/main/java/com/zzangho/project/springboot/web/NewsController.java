@@ -284,7 +284,7 @@ public class NewsController {
             model.addAttribute("name", user.getName()); // user name
         }
 
-        Aggregations aggregations = eSservice.aggregation("naver_news");
+        Aggregations aggregations = eSservice.aggregation("naver_news", 100);
         if ( aggregations != null ) {
             List<Map<String, Object>> companyList = new ArrayList<>();
             Terms byCompanyAggregation = aggregations.get("by_company");
@@ -328,7 +328,7 @@ public class NewsController {
     public List<Map<String, Object>> newsCompanyCount(@LoginUser SessionUser user) {
 
         List<Map<String, Object>> companyList = new ArrayList<>();
-        Aggregations aggregations = eSservice.aggregation("naver_news");
+        Aggregations aggregations = eSservice.aggregation("naver_news", 10);
 
         if ( aggregations != null ) {
             Terms byCompanyAggregation = aggregations.get("by_company");

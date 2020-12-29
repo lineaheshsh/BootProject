@@ -190,14 +190,15 @@ public class ESservice {
      * @param indexName
      * @return
      */
-    public Aggregations aggregation(String indexName) {
+    public Aggregations aggregation(String indexName, int size) {
 
         TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms("by_company")
                                                                         .field("company")
-                                                                        .size(100);
+                                                                        .size(size);
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            searchSourceBuilder.aggregation(aggregationBuilder);
+        searchSourceBuilder.aggregation(aggregationBuilder);
+        searchSourceBuilder.size(0);
 
         SearchRequest request = new SearchRequest(indexName);
         request.source(searchSourceBuilder);
