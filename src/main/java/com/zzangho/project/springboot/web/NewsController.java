@@ -5,21 +5,15 @@ import com.zzangho.project.springboot.config.auth.dto.SessionUser;
 import com.zzangho.project.springboot.domain.common.Parameter;
 import com.zzangho.project.springboot.domain.news.News;
 import com.zzangho.project.springboot.service.elasticSearch.ESservice;
-import com.zzangho.project.springboot.service.posts.PostsService;
 import lombok.RequiredArgsConstructor;
-import org.apache.lucene.search.TotalHits;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,40 +68,40 @@ public class NewsController {
         if ( StringUtils.isEmpty(parameter.getKwd()) ) {
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "POLITICS".equals(parameter.getCategory()) )
-                politicsSearchHit = eSservice.matchAll("naver_news", parameter, "정치");
+                politicsSearchHit = eSservice.matchAll("nori_naver_news", parameter, "정치");
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "ECONOMY".equals(parameter.getCategory()) )
-                economySearchHit = eSservice.matchAll("naver_news", parameter, "경제");
+                economySearchHit = eSservice.matchAll("nori_naver_news", parameter, "경제");
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "SOCIETY".equals(parameter.getCategory()) )
-                societySearchHit = eSservice.matchAll("naver_news", parameter, "사회");
+                societySearchHit = eSservice.matchAll("nori_naver_news", parameter, "사회");
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "CURTURE".equals(parameter.getCategory()) )
-                cultureSearchHit = eSservice.matchAll("naver_news", parameter, "생활/문화");
+                cultureSearchHit = eSservice.matchAll("nori_naver_news", parameter, "생활/문화");
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "WORLD".equals(parameter.getCategory()) )
-                worldSearchHit = eSservice.matchAll("naver_news", parameter, "세계");
+                worldSearchHit = eSservice.matchAll("nori_naver_news", parameter, "세계");
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "IT".equals(parameter.getCategory()) )
-                itSearchHit = eSservice.matchAll("naver_news", parameter, "IT/과학");
+                itSearchHit = eSservice.matchAll("nori_naver_news", parameter, "IT/과학");
         } else {
             if ( StringUtils.isEmpty(parameter.getCategory()) || "POLITICS".equals(parameter.getCategory()) )
-                politicsSearchHit = eSservice.boolQuery("naver_news", parameter, "정치");
+                politicsSearchHit = eSservice.boolQuery("nori_naver_news", parameter, "정치");
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "ECONOMY".equals(parameter.getCategory()) )
-                economySearchHit = eSservice.boolQuery("naver_news", parameter, "경제");
+                economySearchHit = eSservice.boolQuery("nori_naver_news", parameter, "경제");
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "SOCIETY".equals(parameter.getCategory()) )
-                societySearchHit = eSservice.boolQuery("naver_news", parameter, "사회");
+                societySearchHit = eSservice.boolQuery("nori_naver_news", parameter, "사회");
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "CURTURE".equals(parameter.getCategory()) )
-                cultureSearchHit = eSservice.boolQuery("naver_news", parameter, "생활/문화");
+                cultureSearchHit = eSservice.boolQuery("nori_naver_news", parameter, "생활/문화");
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "WORLD".equals(parameter.getCategory()) )
-                worldSearchHit = eSservice.boolQuery("naver_news", parameter, "세계");
+                worldSearchHit = eSservice.boolQuery("nori_naver_news", parameter, "세계");
 
             if ( StringUtils.isEmpty(parameter.getCategory()) || "IT".equals(parameter.getCategory()) )
-                itSearchHit = eSservice.boolQuery("naver_news", parameter, "IT/과학");
+                itSearchHit = eSservice.boolQuery("nori_naver_news", parameter, "IT/과학");
         }
 
         // 정치
@@ -128,6 +122,7 @@ public class NewsController {
                 news.setTime((String) sourceAsMap.get("time"));
                 news.setCompany((String) sourceAsMap.get("company"));
                 news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
+                news.setUrl((String) sourceAsMap.get("url"));
 
                 politicsList.add(news);
                 news = null;
@@ -156,6 +151,7 @@ public class NewsController {
                 news.setTime((String) sourceAsMap.get("time"));
                 news.setCompany((String) sourceAsMap.get("company"));
                 news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
+                news.setUrl((String) sourceAsMap.get("url"));
 
                 economyList.add(news);
                 news = null;
@@ -184,6 +180,7 @@ public class NewsController {
                 news.setTime((String) sourceAsMap.get("time"));
                 news.setCompany((String) sourceAsMap.get("company"));
                 news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
+                news.setUrl((String) sourceAsMap.get("url"));
 
                 societyList.add(news);
                 news = null;
@@ -212,6 +209,7 @@ public class NewsController {
                 news.setTime((String) sourceAsMap.get("time"));
                 news.setCompany((String) sourceAsMap.get("company"));
                 news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
+                news.setUrl((String) sourceAsMap.get("url"));
 
                 cultureList.add(news);
                 news = null;
@@ -240,6 +238,7 @@ public class NewsController {
                 news.setTime((String) sourceAsMap.get("time"));
                 news.setCompany((String) sourceAsMap.get("company"));
                 news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
+                news.setUrl((String) sourceAsMap.get("url"));
 
                 worldList.add(news);
                 news = null;
@@ -268,6 +267,7 @@ public class NewsController {
                 news.setTime((String) sourceAsMap.get("time"));
                 news.setCompany((String) sourceAsMap.get("company"));
                 news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
+                news.setUrl((String) sourceAsMap.get("url"));
 
                 itList.add(news);
                 news = null;
@@ -284,10 +284,10 @@ public class NewsController {
             model.addAttribute("name", user.getName()); // user name
         }
 
-        Aggregations aggregations = eSservice.aggregation("naver_news", 100);
+        Aggregations aggregations = eSservice.aggregation("nori_naver_news", 100, "company", "", "");
         if ( aggregations != null ) {
             List<Map<String, Object>> companyList = new ArrayList<>();
-            Terms byCompanyAggregation = aggregations.get("by_company");
+            Terms byCompanyAggregation = aggregations.get("company");
 
             // For each entry
             for (Terms.Bucket entry : byCompanyAggregation.getBuckets()) {
@@ -311,6 +311,8 @@ public class NewsController {
         return "news/newsList";
     }
 
+
+    //////////////////////////////////////////////////////////////////////////////////////////// Analysis
     @GetMapping("/newsAnalysis")
     public String newsAnalysis(@ModelAttribute Parameter parameter, Model model, @LoginUser SessionUser user) {
 
@@ -328,10 +330,10 @@ public class NewsController {
     public List<Map<String, Object>> newsCompanyCount(@LoginUser SessionUser user) {
 
         List<Map<String, Object>> companyList = new ArrayList<>();
-        Aggregations aggregations = eSservice.aggregation("naver_news", 10);
+        Aggregations aggregations = eSservice.aggregation("nori_naver_news", 10, "company", "", "");
 
         if ( aggregations != null ) {
-            Terms byCompanyAggregation = aggregations.get("by_company");
+            Terms byCompanyAggregation = aggregations.get("company");
 
             // For each entry
             for (Terms.Bucket entry : byCompanyAggregation.getBuckets()) {
@@ -348,4 +350,67 @@ public class NewsController {
 
         return companyList;
     }
+
+    @ResponseBody
+    @GetMapping("/newsCompanyDateCount")
+    public List<Map<String, Object>> newsCompanyDateCount(@LoginUser SessionUser user) {
+
+        List<Map<String, Object>> dateCompanyList = new ArrayList<>();
+        Aggregations agg_date = eSservice.aggregation("nori_naver_news", 10, "date", "domain", "NAVER");
+
+        if ( agg_date != null ) {
+            Terms dateAggregation = agg_date.get("date");
+
+            // For each entry
+            for (Terms.Bucket entry : dateAggregation.getBuckets()) {
+                Map<String, Object> companyMap = new HashMap<>();
+                String key = entry.getKeyAsString();            // bucket key
+                long docCount = entry.getDocCount();            // Doc count
+
+                companyMap.put("date", key);
+                companyMap.put("count", docCount);
+                dateCompanyList.add(companyMap);
+                companyMap = null;
+            }
+        }
+
+        return dateCompanyList;
+    }
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////// Q&A
+    @GetMapping("/newsQnA")
+    public String newsQnA(@ModelAttribute Parameter parameter, Model model, @LoginUser SessionUser user) {
+
+        // session값
+        if ( user != null ) {
+            model.addAttribute("profile", user.getPicture());   // profile 사진
+            model.addAttribute("name", user.getName()); // user name
+        }
+
+        return "news/newsQnA";
+    }
+
+    @GetMapping("/newsQnAAdd")
+    public String newsQnAAdd(@ModelAttribute Parameter parameter, Model model, @LoginUser SessionUser user) {
+
+        // session값
+        if ( user != null ) {
+            model.addAttribute("profile", user.getPicture());   // profile 사진
+            model.addAttribute("name", user.getName()); // user name
+        }
+
+        return "news/newsQnAAdd";
+    }
+
+    @PutMapping("/categoryAdd")
+    @ResponseBody
+    public String categoryAdd(@RequestBody Map<String, String> categoryNM) {
+        System.out.println("categoryNM :: " + categoryNM.toString());
+        eSservice.createIndex(categoryNM.get("categoryNM"));
+        System.out.println("index End");
+
+        return "";
+    };
 }

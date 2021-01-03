@@ -112,177 +112,33 @@
                             <div class="tab-pane fade active show" id="overview" role="tabpanel" aria-labelledby="overview-pill">
 
                                 {{#politicsTotal}}
-                                <div id="politicsContents">
-                                    <h5 class="card-title" style="padding: 1.25rem;">정치({{#politicsTotal}}{{politicsTotal}}{{/politicsTotal}}{{^politicsTotal}}0{{/politicsTotal}})</h5>
-                                    <div class="card-body">
-                                        {{#politicsList}}
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <div class="d-flex align-items-center">
-                                                <div style="width: 100px; font-weight: bold;">{{company}}</div>
-                                                <div class="ml-4">
-                                                    <div class="small"><a href="#">{{title}}</a></div>
-                                                    <div class="text-xs text-muted">{{domain}}</div>
-                                                </div>
-                                            </div>
-                                            <div class="ml-4 small">
-                                                <div class="badge badge-light mr-3">{{date}} {{ampm}} {{time}}</div>
-                                            </div>
-                                        </div>
-                                            <hr>
-                                        {{/politicsList}}
-                                        {{^politicsList}}
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            검색 결과가 없습니다.
-                                        </div>
-                                            <hr>
-                                        {{/politicsList}}
-                                    </div>
-                                </div>
+                                    <!-- 정치 -->
+                                    {{>news/result/politics}}
                                 {{/politicsTotal}}
 
                                 {{#economyTotal}}
-                                <div id="economyContents">
-                                    <h5 class="card-title" style="padding: 1.25rem;">경제({{#economyTotal}}{{economyTotal}}{{/economyTotal}}{{^economyTotal}}0{{/economyTotal}})</h5>
-                                    <div class="card-body">
-                                        {{#economyList}}
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <div style="width: 100px; font-weight: bold;">{{company}}</div>
-                                                    <div class="ml-4">
-                                                        <div class="small"><a href="#">{{title}}</a></div>
-                                                        <div class="text-xs text-muted">{{domain}}</div>
-                                                    </div>
-                                                </div>
-                                                <div class="ml-4 small">
-                                                    <div class="badge badge-light mr-3">{{date}} {{ampm}} {{time}}</div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                        {{/economyList}}
-                                        {{^economyList}}
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                검색 결과가 없습니다.
-                                            </div>
-                                            <hr>
-                                        {{/economyList}}
-                                    </div>
-                                </div>
+                                    <!-- 경제 -->
+                                    {{>news/result/economy}}
                                 {{/economyTotal}}
 
                                 {{#societyTotal}}
-                                <div id="societyContents">
-                                    <h5 class="card-title" style="padding: 1.25rem;">사회({{#societyTotal}}{{societyTotal}}{{/societyTotal}}{{^societyTotal}}0{{/societyTotal}})</h5>
-                                    <div class="card-body">
-                                        {{#societyList}}
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <div style="width: 100px; font-weight: bold;">{{company}}</div>
-                                                    <div class="ml-4">
-                                                        <div class="small"><a href="#">{{title}}</a></div>
-                                                        <div class="text-xs text-muted">{{domain}}</div>
-                                                    </div>
-                                                </div>
-                                                <div class="ml-4 small">
-                                                    <div class="badge badge-light mr-3">{{date}} {{ampm}} {{time}}</div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                        {{/societyList}}
-                                        {{^societyList}}
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                검색 결과가 없습니다.
-                                            </div>
-                                            <hr>
-                                        {{/societyList}}
-                                    </div>
-                                </div>
+                                    <!-- 사회 -->
+                                    {{>news/result/society}}
                                 {{/societyTotal}}
 
                                 {{#cultureTotal}}
-                                <div id="curtureContents">
-                                    <h5 class="card-title" style="padding: 1.25rem;">생활/문화({{#cultureTotal}}{{cultureTotal}}{{/cultureTotal}}{{^cultureTotal}}0{{/cultureTotal}})</h5>
-                                    <div class="card-body">
-                                        {{#cultureList}}
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <div style="width: 100px; font-weight: bold;">{{company}}</div>
-                                                    <div class="ml-4">
-                                                        <div class="small"><a href="#">{{title}}</a></div>
-                                                        <div class="text-xs text-muted">{{domain}}</div>
-                                                    </div>
-                                                </div>
-                                                <div class="ml-4 small">
-                                                    <div class="badge badge-light mr-3">{{date}} {{ampm}} {{time}}</div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                        {{/cultureList}}
-                                        {{^cultureList}}
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                검색 결과가 없습니다.
-                                            </div>
-                                            <hr>
-                                        {{/cultureList}}
-                                    </div>
-                                </div>
+                                    <!-- 문화 -->
+                                    {{>news/result/society}}
                                 {{/cultureTotal}}
 
                                 {{#worldTotal}}
-                                <div id="worldContents">
-                                    <h5 class="card-title" style="padding: 1.25rem;">세계({{#worldTotal}}{{worldTotal}}{{/worldTotal}}{{^worldTotal}}0{{/worldTotal}})</h5>
-                                    <div class="card-body">
-                                        {{#worldList}}
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <div style="width: 100px; font-weight: bold;">{{company}}</div>
-                                                    <div class="ml-4">
-                                                        <div class="small"><a href="#">{{title}}</a></div>
-                                                        <div class="text-xs text-muted">{{domain}}</div>
-                                                    </div>
-                                                </div>
-                                                <div class="ml-4 small">
-                                                    <div class="badge badge-light mr-3">{{date}} {{ampm}} {{time}}</div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                        {{/worldList}}
-                                        {{^worldList}}
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                검색 결과가 없습니다.
-                                            </div>
-                                            <hr>
-                                        {{/worldList}}
-                                    </div>
-                                </div>
+                                    <!-- 세계 -->
+                                    {{>news/result/world}}
                                 {{/worldTotal}}
 
                                 {{#itTotal}}
-                                <div id="itContents">
-                                    <h5 class="card-title" style="padding: 1.25rem;">IT/과학({{#itTotal}}{{itTotal}}{{/itTotal}}{{^itTotal}}0{{/itTotal}})</h5>
-                                    <div class="card-body">
-                                        {{#itList}}
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <div style="width: 100px; font-weight: bold;">{{company}}</div>
-                                                    <div class="ml-4">
-                                                        <div class="small"><a href="#">{{title}}</a></div>
-                                                        <div class="text-xs text-muted">{{domain}}</div>
-                                                    </div>
-                                                </div>
-                                                <div class="ml-4 small">
-                                                    <div class="badge badge-light mr-3">{{date}} {{ampm}} {{time}}</div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                        {{/itList}}
-                                        {{^itList}}
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                검색 결과가 없습니다.
-                                            </div>
-                                            <hr>
-                                        {{/itList}}
-                                    </div>
-                                </div>
+                                    <!-- IT -->
+                                    {{>news/result/world}}
                                 {{/itTotal}}
 
                             </div>

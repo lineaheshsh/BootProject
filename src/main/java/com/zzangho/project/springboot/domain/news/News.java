@@ -16,5 +16,5 @@ public class News {
     private String time;
     private String company;
     private String udt_dt;
-
+    private String url;
 }

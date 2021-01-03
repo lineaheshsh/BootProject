@@ -5,9 +5,10 @@ var newsAnalysis_main = {
     init : function () {
         var _this = this;
 
-        _this.initCompanyAnalysis();
+        _this.initPieAnalysis();
+        _this.initLineAnalysis();
     },
-    initCompanyAnalysis : function () {
+    initPieAnalysis : function () {
         var ctx = document.getElementById("newsCompanyAnalysis");
 
         $.ajax({
@@ -32,36 +33,6 @@ var newsAnalysis_main = {
                     _color.push('#'+Math.floor(Math.random()*16777215).toString(16));
                 });
 
-                /**
-                var myPieChart = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: _title,
-                        datasets: [{
-                            data: _count,
-                            backgroundColor: _color
-                        }],
-                    },
-                    options: {
-                        maintainAspectRatio: false,
-                        tooltips: {
-                            backgroundColor: "rgb(255,255,255)",
-                            bodyFontColor: "#858796",
-                            borderColor: '#dddfeb',
-                            borderWidth: 1,
-                            xPadding: 15,
-                            yPadding: 15,
-                            displayColors: false,
-                            caretPadding: 10,
-                        },
-                        legend: {
-                            display: false
-                        },
-                        cutoutPercentage: 80,
-                    },
-                });
-                 **/
-
                 Highcharts.chart('donutChart', {
                     chart: {
                         plotBackgroundColor: null,
@@ -69,9 +40,9 @@ var newsAnalysis_main = {
                         plotShadow: false,
                         type: 'pie'
                     },
-                    title: {
-                        text: 'Browser market shares in January, 2018'
-                    },
+                    // title: {
+                    //     text: 'Browser market shares in January, 2018'
+                    // },
                     tooltip: {
                         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
                     },
@@ -103,6 +74,69 @@ var newsAnalysis_main = {
         });
 
     },
+    initLineAnalysis : function () {
+        var ctx = document.getElementById("newsCompanyAnalysis");
+
+        $.ajax({
+            url: '/newsCompanyDateCount',
+            type: 'GET',
+            success: function onData (data) {
+                console.log(data);
+
+                var _list = [];
+                var _obj = {};
+                var _date = [];
+                var _value = [];
+
+
+
+                $.each(data, function (index, item) {
+                    _date.push(item.date);
+                    _value.push(item.count);
+                });
+
+                console.log(_date);
+                console.log(_value);
+
+                _obj.name = "naver";
+                _obj.data = _value;
+                _obj.color = "#19ce60"; // naver color
+
+                _list.push(_obj);
+                console.log(_obj);
+
+                Highcharts.chart('lineChart', {
+                    chart: {
+                        type: 'line'
+                    },
+                    // title: {
+                    //     text: '도메인 별 Crawling Data 추이'
+                    // },
+                    xAxis: {
+                        categories: _date
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Temperature (°C)'
+                        }
+                    },
+                    plotOptions: {
+                        line: {
+                            dataLabels: {
+                                enabled: true
+                            },
+                            enableMouseTracking: false
+                        }
+                    },
+                    series: _list
+                });
+            },
+            error: function onError (error) {
+                console.error(error);
+            }
+        });
+
+    }
 };
 
 newsAnalysis_main.init();
