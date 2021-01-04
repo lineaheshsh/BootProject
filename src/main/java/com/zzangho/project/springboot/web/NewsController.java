@@ -5,6 +5,7 @@ import com.zzangho.project.springboot.config.auth.dto.SessionUser;
 import com.zzangho.project.springboot.domain.common.Parameter;
 import com.zzangho.project.springboot.domain.news.News;
 import com.zzangho.project.springboot.service.elasticSearch.ESservice;
+import com.zzangho.project.springboot.web.dto.news.NewsDto;
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -30,17 +31,10 @@ public class NewsController {
     private final ESservice eSservice;
 
     @GetMapping("/newsList")
-    public String newsList(@ModelAttribute Parameter parameter, Model model, @LoginUser SessionUser user) {
+    public String newsList(@ModelAttribute NewsDto.Request parameter, Model model, @LoginUser SessionUser user) {
 
         Map<String, Object> resultMap = new HashMap<>();
         long total = 0;
-
-        List<News> politicsList = new ArrayList<>();
-        List<News> economyList = new ArrayList<>();
-        List<News> societyList = new ArrayList<>();
-        List<News> cultureList = new ArrayList<>();
-        List<News> worldList = new ArrayList<>();
-        List<News> itList = new ArrayList<>();
 
         SearchHits politicsSearchHit = null;
         SearchHits economySearchHit = null;
@@ -50,232 +44,84 @@ public class NewsController {
         SearchHits itSearchHit = null;
 
         // 페이지 번호가 비어잇을 경우 0으로 셋팅
-        if (StringUtils.isEmpty(parameter.getPageNum()) ) {
-            parameter.setPageNum(0);
-        }
+        if (StringUtils.isEmpty(parameter.getPageNum()) ) parameter.setPageNum(0);
 
         // limit이 비어있을 경우 10으로 셋팅
-        if (StringUtils.isEmpty(parameter.getLimit()) ) {
-            parameter.setLimit(10);
-        }
+        if (StringUtils.isEmpty(parameter.getLimit()) ) parameter.setLimit(10);
 
         // orderby가 비어있을 경우 r으로 셋팅
-        if (StringUtils.isEmpty(parameter.getOrderby()) ) {
-            parameter.setOrderby("r");
-        }
+        if (StringUtils.isEmpty(parameter.getOrderby()) ) parameter.setOrderby("r");
 
-        // 키워드가 비어있을 경우 전체 검색
-        if ( StringUtils.isEmpty(parameter.getKwd()) ) {
+        if ( StringUtils.isEmpty(parameter.getCategory()) || "POLITICS".equals(parameter.getCategory()) ) {
+            politicsSearchHit = eSservice.search("nori_naver_news", parameter, "정치");
 
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "POLITICS".equals(parameter.getCategory()) )
-                politicsSearchHit = eSservice.matchAll("nori_naver_news", parameter, "정치");
+            // 정치
+            if ( politicsSearchHit != null ) {
 
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "ECONOMY".equals(parameter.getCategory()) )
-                economySearchHit = eSservice.matchAll("nori_naver_news", parameter, "경제");
-
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "SOCIETY".equals(parameter.getCategory()) )
-                societySearchHit = eSservice.matchAll("nori_naver_news", parameter, "사회");
-
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "CURTURE".equals(parameter.getCategory()) )
-                cultureSearchHit = eSservice.matchAll("nori_naver_news", parameter, "생활/문화");
-
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "WORLD".equals(parameter.getCategory()) )
-                worldSearchHit = eSservice.matchAll("nori_naver_news", parameter, "세계");
-
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "IT".equals(parameter.getCategory()) )
-                itSearchHit = eSservice.matchAll("nori_naver_news", parameter, "IT/과학");
-        } else {
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "POLITICS".equals(parameter.getCategory()) )
-                politicsSearchHit = eSservice.boolQuery("nori_naver_news", parameter, "정치");
-
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "ECONOMY".equals(parameter.getCategory()) )
-                economySearchHit = eSservice.boolQuery("nori_naver_news", parameter, "경제");
-
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "SOCIETY".equals(parameter.getCategory()) )
-                societySearchHit = eSservice.boolQuery("nori_naver_news", parameter, "사회");
-
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "CURTURE".equals(parameter.getCategory()) )
-                cultureSearchHit = eSservice.boolQuery("nori_naver_news", parameter, "생활/문화");
-
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "WORLD".equals(parameter.getCategory()) )
-                worldSearchHit = eSservice.boolQuery("nori_naver_news", parameter, "세계");
-
-            if ( StringUtils.isEmpty(parameter.getCategory()) || "IT".equals(parameter.getCategory()) )
-                itSearchHit = eSservice.boolQuery("nori_naver_news", parameter, "IT/과학");
-        }
-
-        // 정치
-        if ( politicsSearchHit != null ) {
-            System.out.println("politicsSearchHit is not null [" + politicsSearchHit.getTotalHits() + "]");
-            for (SearchHit searchHit : politicsSearchHit) {
-                Map<String, Object> sourceAsMap = searchHit.getSourceAsMap();
-                News news = new News();
-
-                news.setContents_id((Integer) sourceAsMap.get("contents_id"));
-                news.setDomain((String) sourceAsMap.get("domain"));
-                news.setCategory_nm((String) sourceAsMap.get("category_nm"));
-                news.setTitle((String) sourceAsMap.get("title"));
-                news.setContents((String) sourceAsMap.get("contents"));
-                news.setWriter((String) sourceAsMap.get("writer"));
-                news.setDate((String) sourceAsMap.get("date"));
-                news.setAmpm((String) sourceAsMap.get("ampm"));
-                news.setTime((String) sourceAsMap.get("time"));
-                news.setCompany((String) sourceAsMap.get("company"));
-                news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
-                news.setUrl((String) sourceAsMap.get("url"));
-
-                politicsList.add(news);
-                news = null;
+                total += politicsSearchHit.getTotalHits().value;
+                model = setData(model, politicsSearchHit, "politicsList");
+                model.addAttribute("politicsTotal", politicsSearchHit.getTotalHits().value);
             }
-
-            total += politicsSearchHit.getTotalHits().value;
-            model.addAttribute("politicsTotal", politicsSearchHit.getTotalHits().value);
-            model.addAttribute("politicsList", politicsList);
         }
 
-        // 경제
-        if ( economySearchHit != null ) {
-            System.out.println("economySearchHit is not null");
-            for (SearchHit searchHit : economySearchHit) {
-                Map<String, Object> sourceAsMap = searchHit.getSourceAsMap();
-                News news = new News();
+        if ( StringUtils.isEmpty(parameter.getCategory()) || "ECONOMY".equals(parameter.getCategory()) ) {
+            economySearchHit = eSservice.search("nori_naver_news", parameter, "경제");
 
-                news.setContents_id((Integer) sourceAsMap.get("contents_id"));
-                news.setDomain((String) sourceAsMap.get("domain"));
-                news.setCategory_nm((String) sourceAsMap.get("category_nm"));
-                news.setTitle((String) sourceAsMap.get("title"));
-                news.setContents((String) sourceAsMap.get("contents"));
-                news.setWriter((String) sourceAsMap.get("writer"));
-                news.setDate((String) sourceAsMap.get("date"));
-                news.setAmpm((String) sourceAsMap.get("ampm"));
-                news.setTime((String) sourceAsMap.get("time"));
-                news.setCompany((String) sourceAsMap.get("company"));
-                news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
-                news.setUrl((String) sourceAsMap.get("url"));
+            // 경제
+            if ( economySearchHit != null ) {
 
-                economyList.add(news);
-                news = null;
+                total += economySearchHit.getTotalHits().value;
+                model = setData(model, economySearchHit, "economyList");
+                model.addAttribute("economyTotal", economySearchHit.getTotalHits().value);
             }
-
-            total += economySearchHit.getTotalHits().value;
-            model.addAttribute("economyTotal", economySearchHit.getTotalHits().value);
-            model.addAttribute("economyList", economyList);
         }
 
-        // 사회
-        if ( societySearchHit != null ) {
-            System.out.println("societySearchHit is not null");
-            for (SearchHit searchHit : societySearchHit) {
-                Map<String, Object> sourceAsMap = searchHit.getSourceAsMap();
-                News news = new News();
+        if ( StringUtils.isEmpty(parameter.getCategory()) || "SOCIETY".equals(parameter.getCategory()) ) {
+            societySearchHit = eSservice.search("nori_naver_news", parameter, "사회");
 
-                news.setContents_id((Integer) sourceAsMap.get("contents_id"));
-                news.setDomain((String) sourceAsMap.get("domain"));
-                news.setCategory_nm((String) sourceAsMap.get("category_nm"));
-                news.setTitle((String) sourceAsMap.get("title"));
-                news.setContents((String) sourceAsMap.get("contents"));
-                news.setWriter((String) sourceAsMap.get("writer"));
-                news.setDate((String) sourceAsMap.get("date"));
-                news.setAmpm((String) sourceAsMap.get("ampm"));
-                news.setTime((String) sourceAsMap.get("time"));
-                news.setCompany((String) sourceAsMap.get("company"));
-                news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
-                news.setUrl((String) sourceAsMap.get("url"));
+            // 사회
+            if ( societySearchHit != null ) {
 
-                societyList.add(news);
-                news = null;
+                total += societySearchHit.getTotalHits().value;
+                model = setData(model, societySearchHit, "societyList");
+                model.addAttribute("societyTotal", societySearchHit.getTotalHits().value);
             }
-
-            total += societySearchHit.getTotalHits().value;
-            model.addAttribute("societyTotal", societySearchHit.getTotalHits().value);
-            model.addAttribute("societyList", societyList);
         }
 
-        // 생활/문화
-        if ( cultureSearchHit != null ) {
-            System.out.println("cultureSearchHit is not null");
-            for (SearchHit searchHit : cultureSearchHit) {
-                Map<String, Object> sourceAsMap = searchHit.getSourceAsMap();
-                News news = new News();
+        if ( StringUtils.isEmpty(parameter.getCategory()) || "CURTURE".equals(parameter.getCategory()) ) {
+            cultureSearchHit = eSservice.search("nori_naver_news", parameter, "생활/문화");
 
-                news.setContents_id((Integer) sourceAsMap.get("contents_id"));
-                news.setDomain((String) sourceAsMap.get("domain"));
-                news.setCategory_nm((String) sourceAsMap.get("category_nm"));
-                news.setTitle((String) sourceAsMap.get("title"));
-                news.setContents((String) sourceAsMap.get("contents"));
-                news.setWriter((String) sourceAsMap.get("writer"));
-                news.setDate((String) sourceAsMap.get("date"));
-                news.setAmpm((String) sourceAsMap.get("ampm"));
-                news.setTime((String) sourceAsMap.get("time"));
-                news.setCompany((String) sourceAsMap.get("company"));
-                news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
-                news.setUrl((String) sourceAsMap.get("url"));
+            // 생활/문화
+            if ( cultureSearchHit != null ) {
 
-                cultureList.add(news);
-                news = null;
+                total += cultureSearchHit.getTotalHits().value;
+                model = setData(model, cultureSearchHit, "cultureList");
+                model.addAttribute("cultureTotal", cultureSearchHit.getTotalHits().value);
             }
-
-            total += cultureSearchHit.getTotalHits().value;
-            model.addAttribute("cultureTotal", cultureSearchHit.getTotalHits().value);
-            model.addAttribute("cultureList", cultureList);
         }
 
-        // 세계
-        if ( worldSearchHit != null ) {
-            System.out.println("worldSearchHit is not null");
-            for (SearchHit searchHit : worldSearchHit) {
-                Map<String, Object> sourceAsMap = searchHit.getSourceAsMap();
-                News news = new News();
+        if ( StringUtils.isEmpty(parameter.getCategory()) || "WORLD".equals(parameter.getCategory()) ) {
+            worldSearchHit = eSservice.search("nori_naver_news", parameter, "세계");
 
-                news.setContents_id((Integer) sourceAsMap.get("contents_id"));
-                news.setDomain((String) sourceAsMap.get("domain"));
-                news.setCategory_nm((String) sourceAsMap.get("category_nm"));
-                news.setTitle((String) sourceAsMap.get("title"));
-                news.setContents((String) sourceAsMap.get("contents"));
-                news.setWriter((String) sourceAsMap.get("writer"));
-                news.setDate((String) sourceAsMap.get("date"));
-                news.setAmpm((String) sourceAsMap.get("ampm"));
-                news.setTime((String) sourceAsMap.get("time"));
-                news.setCompany((String) sourceAsMap.get("company"));
-                news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
-                news.setUrl((String) sourceAsMap.get("url"));
+            // 세계
+            if ( worldSearchHit != null ) {
 
-                worldList.add(news);
-                news = null;
+                total += worldSearchHit.getTotalHits().value;
+                model = setData(model, worldSearchHit, "worldList");
+                model.addAttribute("worldTotal", worldSearchHit.getTotalHits().value);
             }
-
-            total += worldSearchHit.getTotalHits().value;
-            model.addAttribute("worldTotal", worldSearchHit.getTotalHits().value);
-            model.addAttribute("worldList", worldList);
         }
 
-        // IT/과학
-        if ( itSearchHit != null ) {
-            System.out.println("itSearchHit is not null");
-            for (SearchHit searchHit : itSearchHit) {
-                Map<String, Object> sourceAsMap = searchHit.getSourceAsMap();
-                News news = new News();
+        if ( StringUtils.isEmpty(parameter.getCategory()) || "IT".equals(parameter.getCategory()) ) {
+            itSearchHit = eSservice.search("nori_naver_news", parameter, "IT/과학");
 
-                news.setContents_id((Integer) sourceAsMap.get("contents_id"));
-                news.setDomain((String) sourceAsMap.get("domain"));
-                news.setCategory_nm((String) sourceAsMap.get("category_nm"));
-                news.setTitle((String) sourceAsMap.get("title"));
-                news.setContents((String) sourceAsMap.get("contents"));
-                news.setWriter((String) sourceAsMap.get("writer"));
-                news.setDate((String) sourceAsMap.get("date"));
-                news.setAmpm((String) sourceAsMap.get("ampm"));
-                news.setTime((String) sourceAsMap.get("time"));
-                news.setCompany((String) sourceAsMap.get("company"));
-                news.setUdt_dt((String) sourceAsMap.get("udt_dt"));
-                news.setUrl((String) sourceAsMap.get("url"));
+            // IT/과학
+            if ( itSearchHit != null ) {
 
-                itList.add(news);
-                news = null;
+                total += itSearchHit.getTotalHits().value;
+                model = setData(model, itSearchHit, "itList");
+                model.addAttribute("itTotal", itSearchHit.getTotalHits().value);
             }
-
-            total += itSearchHit.getTotalHits().value;
-            model.addAttribute("itTotal", itSearchHit.getTotalHits().value);
-            model.addAttribute("itList", itList);
         }
 
         // session값
@@ -309,6 +155,42 @@ public class NewsController {
         model.addAttribute("limit", 10);
 
         return "news/newsList";
+    }
+
+    /**
+     * searchHit -> NewsDto.Info
+     * @param model
+     * @param searchHits
+     * @param resultKey
+     * @return
+     */
+    private Model setData(Model model, SearchHits searchHits, String resultKey) {
+
+        List<NewsDto.Info> list = new ArrayList<>();
+        for (SearchHit searchHit : searchHits) {
+            Map<String, Object> sourceAsMap = searchHit.getSourceAsMap();
+
+            NewsDto.Info newsDto = NewsDto.Info.builder().contents_id((Integer) sourceAsMap.get("contents_id"))
+                    .domain((String) sourceAsMap.get("domain"))
+                    .category_nm((String) sourceAsMap.get("category_nm"))
+                    .title((String) sourceAsMap.get("title"))
+                    .contents((String) sourceAsMap.get("contents"))
+                    .writer((String) sourceAsMap.get("writer"))
+                    .date((String) sourceAsMap.get("date"))
+                    .ampm((String) sourceAsMap.get("ampm"))
+                    .time((String) sourceAsMap.get("time"))
+                    .company((String) sourceAsMap.get("company"))
+                    .udt_dt((String) sourceAsMap.get("udt_dt"))
+                    .url((String) sourceAsMap.get("url"))
+                    .build();
+
+            list.add(newsDto);
+            newsDto = null;
+        }
+
+        model.addAttribute(resultKey, list);
+
+        return model;
     }
 
 

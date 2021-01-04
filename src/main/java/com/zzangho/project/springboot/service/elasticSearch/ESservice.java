@@ -1,6 +1,7 @@
 package com.zzangho.project.springboot.service.elasticSearch;
 
 import com.zzangho.project.springboot.domain.common.Parameter;
+import com.zzangho.project.springboot.web.dto.news.NewsDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.ActionListener;
@@ -169,12 +170,17 @@ public class ESservice {
      * @param parameter   파라메터
      * @return  SearchHits
      */
-    public SearchHits matchAll(String indexName, Parameter parameter, String category) {
+    public SearchHits search(String indexName, NewsDto.Request parameter, String category) {
 
         BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery();
 
-        queryBuilders.must(QueryBuilders.matchAllQuery())
-                     .filter(QueryBuilders.termQuery("category_nm", category));
+        // 키워드가 있을 경우
+        if ( parameter.getKwd() != null && !"".equals(parameter.getKwd()) )
+            queryBuilders.must(QueryBuilders.termQuery("title", parameter.getKwd()));
+        else
+            queryBuilders.must(QueryBuilders.matchAllQuery());
+
+        queryBuilders.filter(QueryBuilders.termQuery("category_nm", category));
 
         // 신문사 옵션이 전체가 아닌경우
         if ( parameter.getCompany() != null && !"".equals(parameter.getCompany()) )
@@ -256,7 +262,7 @@ public class ESservice {
      * @param category
      * @return
      */
-    public SearchHits boolQuery(String indexName, Parameter parameter, String category) {
+    public SearchHits boolQuery(String indexName, NewsDto.Request parameter, String category) {
 
         BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery();
 
