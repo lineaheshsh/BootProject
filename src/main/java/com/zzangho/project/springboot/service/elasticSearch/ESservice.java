@@ -315,12 +315,13 @@ public class ESservice {
      * @param indexName
      * @return
      */
-    public Aggregations aggregation(String indexName, int size, String aggFd, String searchFd, String searchKwd) {
+    public Aggregations aggregation(String indexName, int size, String aggFd, String searchFd, String searchKwd, boolean isOrder) {
 
         TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms(aggFd)
                                                                         .field(aggFd)
-                                                                        .size(size)
-                                                                        .order(BucketOrder.key(true));
+                                                                        .size(size);
+
+        if ( isOrder ) aggregationBuilder.order(BucketOrder.key(true));
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         if ( !StringUtils.isEmpty(searchKwd) ) {

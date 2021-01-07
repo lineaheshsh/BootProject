@@ -127,10 +127,10 @@ public class NewsController {
         // session값
         if ( user != null ) {
             model.addAttribute("profile", user.getPicture());   // profile 사진
-            model.addAttribute("name", user.getName()); // user name
+            model.addAttribute("na-=[e", user.getName()); // user name
         }
 
-        Aggregations aggregations = eSservice.aggregation("nori_naver_news", 100, "company", "", "");
+        Aggregations aggregations = eSservice.aggregation("nori_naver_news", 100, "company", "", "", false);
         if ( aggregations != null ) {
             List<Map<String, Object>> companyList = new ArrayList<>();
             Terms byCompanyAggregation = aggregations.get("company");
@@ -212,7 +212,7 @@ public class NewsController {
     public List<Map<String, Object>> newsCompanyCount(@LoginUser SessionUser user) {
 
         List<Map<String, Object>> companyList = new ArrayList<>();
-        Aggregations aggregations = eSservice.aggregation("nori_naver_news", 10, "company", "", "");
+        Aggregations aggregations = eSservice.aggregation("nori_naver_news", 10, "company", "", "", false);
 
         if ( aggregations != null ) {
             Terms byCompanyAggregation = aggregations.get("company");
@@ -238,7 +238,7 @@ public class NewsController {
     public List<Map<String, Object>> newsCompanyDateCount(@LoginUser SessionUser user) {
 
         List<Map<String, Object>> dateCompanyList = new ArrayList<>();
-        Aggregations agg_date = eSservice.aggregation("nori_naver_news", 10, "date", "domain", "NAVER");
+        Aggregations agg_date = eSservice.aggregation("nori_naver_news", 10, "date", "domain", "NAVER", true);
 
         if ( agg_date != null ) {
             Terms dateAggregation = agg_date.get("date");
@@ -259,7 +259,31 @@ public class NewsController {
         return dateCompanyList;
     }
 
+    @ResponseBody
+    @GetMapping("/newsHotKeyword")
+    public List<Map<String, Object>> newsHotKeyword(@LoginUser SessionUser user) {
 
+        List<Map<String, Object>> hotKeywordList = new ArrayList<>();
+        Aggregations agg_date = eSservice.aggregation("nori_naver_news", 100, "keywords", "", "", false);
+
+        if ( agg_date != null ) {
+            Terms dateAggregation = agg_date.get("keywords");
+
+            // For each entry
+            for (Terms.Bucket entry : dateAggregation.getBuckets()) {
+                Map<String, Object> keywordMap = new HashMap<>();
+                String key = entry.getKeyAsString();            // bucket key
+                long docCount = entry.getDocCount();            // Doc count
+
+                keywordMap.put("keyword", key);
+                keywordMap.put("count", docCount);
+                hotKeywordList.add(keywordMap);
+                keywordMap = null;
+            }
+        }
+
+        return hotKeywordList;
+    }
 
     //////////////////////////////////////////////////////////////////////////////////////////// Q&A
     @GetMapping("/newsQnA")

@@ -7,6 +7,7 @@ var newsAnalysis_main = {
 
         _this.initPieAnalysis();
         _this.initLineAnalysis();
+        _this.initWordCloud();
     },
     initPieAnalysis : function () {
         var ctx = document.getElementById("newsCompanyAnalysis");
@@ -40,9 +41,9 @@ var newsAnalysis_main = {
                         plotShadow: false,
                         type: 'pie'
                     },
-                    // title: {
-                    //     text: 'Browser market shares in January, 2018'
-                    // },
+                    title: {
+                        text: 'donut Chart'
+                    },
                     tooltip: {
                         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
                     },
@@ -109,9 +110,9 @@ var newsAnalysis_main = {
                     chart: {
                         type: 'line'
                     },
-                    // title: {
-                    //     text: '도메인 별 Crawling Data 추이'
-                    // },
+                    title: {
+                        text: 'line Chart'
+                    },
                     xAxis: {
                         categories: _date
                     },
@@ -129,6 +130,49 @@ var newsAnalysis_main = {
                         }
                     },
                     series: _list
+                });
+            },
+            error: function onError (error) {
+                console.error(error);
+            }
+        });
+
+    },
+    initWordCloud : function () {
+        var ctx = document.getElementById("newsHotKeywordAnalysis");
+
+        $.ajax({
+            url: '/newsHotKeyword',
+            type: 'GET',
+            success: function onData (data) {
+                console.log(data);
+
+                var _data = [];
+
+                $.each(data, function (index, item) {
+                    var _obj = {};
+                    _obj.name = item.keyword;
+                    _obj.weight = item.count;
+                    _data.push(_obj);
+                });
+
+                Highcharts.chart(ctx, {
+                    accessibility: {
+                        screenReaderSection: {
+                            beforeChartFormat: '<h5>{chartTitle}</h5>' +
+                                '<div>{chartSubtitle}</div>' +
+                                '<div>{chartLongdesc}</div>' +
+                                '<div>{viewTableButton}</div>'
+                        }
+                    },
+                    series: [{
+                        type: 'wordcloud',
+                        data: _data,
+                        name: 'Occurrences'
+                    }],
+                    title: {
+                        text: 'Wordcloud'
+                    }
                 });
             },
             error: function onError (error) {
