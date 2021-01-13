@@ -16,10 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 엘라스틱 서치
@@ -127,7 +124,7 @@ public class NewsController {
         // session값
         if ( user != null ) {
             model.addAttribute("profile", user.getPicture());   // profile 사진
-            model.addAttribute("na-=[e", user.getName()); // user name
+            model.addAttribute("name", user.getName()); // user name
         }
 
         Aggregations aggregations = eSservice.aggregation("nori_naver_news", 100, "company", "", "", false);
@@ -204,6 +201,23 @@ public class NewsController {
             model.addAttribute("name", user.getName()); // user name
         }
 
+        Aggregations aggregations = eSservice.aggregation("nori_naver_news", 10, "category_nm", "", "", false);
+        if ( aggregations != null ) {
+            List<Map<String, Object>> categoryList = new ArrayList<>();
+            Terms byCategoryNMAggregation = aggregations.get("category_nm");
+
+            // For each entry
+            for (Terms.Bucket entry : byCategoryNMAggregation.getBuckets()) {
+                Map<String, Object> categoryMap = new HashMap<>();
+                String key = entry.getKeyAsString();            // bucket key
+
+                categoryMap.put("name", key);
+                categoryList.add(categoryMap);
+                categoryMap = null;
+            }
+            model.addAttribute("categoryList", categoryList);
+        }
+
         return "news/newsAnalysis";
     }
 
@@ -256,15 +270,26 @@ public class NewsController {
             }
         }
 
+        // 날짜 정렬
+        Collections.sort(dateCompanyList, new Comparator<Map<String, Object>>() {
+            @Override
+            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+                String date1 = (String) o1.get("date");
+                String date2 = (String) o2.get("date");
+                return date1.compareTo(date2);
+            }
+        });
+
         return dateCompanyList;
     }
 
     @ResponseBody
     @GetMapping("/newsHotKeyword")
-    public List<Map<String, Object>> newsHotKeyword(@LoginUser SessionUser user) {
+    public List<Map<String, Object>> newsHotKeyword(@RequestParam String categoryNM, @LoginUser SessionUser user) {
 
+        System.out.println("[" + categoryNM + "]");
         List<Map<String, Object>> hotKeywordList = new ArrayList<>();
-        Aggregations agg_date = eSservice.aggregation("nori_naver_news", 100, "keywords", "", "", false);
+        Aggregations agg_date = eSservice.aggregation("nori_naver_news", 100, "keywords", "category_nm", categoryNM, false);
 
         if ( agg_date != null ) {
             Terms dateAggregation = agg_date.get("keywords");

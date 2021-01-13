@@ -39,16 +39,6 @@
                             </div>
                         </div>
 
-                        <!-- Bar Chart -->
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">핫이슈 키워드</h6>
-                            </div>
-                            <div class="card-body">
-                                <div id="newsHotKeywordAnalysis"></div>
-                            </div>
-                        </div>
-
                     </div>
 
                     <!-- Donut Chart -->
@@ -66,6 +56,30 @@
                                 <hr>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Content Row -->
+                <div class="row">
+
+                    <div class="col-xl-12 col-lg-7">
+
+                        <!-- Bar Chart -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">핫이슈 키워드 Top 100</h6>
+                                <select id="newsHotKeywordCategory" style="float: right;">
+                                    <option value="">전체</option>
+                                    {{#categoryList}}
+                                        <option value="{{name}}">{{name}}</option>
+                                    {{/categoryList}}
+                                </select>
+                            </div>
+                            <div class="card-body">
+                                <div id="newsHotKeywordAnalysis"></div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

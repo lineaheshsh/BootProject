@@ -321,7 +321,7 @@ public class ESservice {
                                                                         .field(aggFd)
                                                                         .size(size);
 
-        if ( isOrder ) aggregationBuilder.order(BucketOrder.key(true));
+        if ( isOrder ) aggregationBuilder.order(BucketOrder.key(false));
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         if ( !StringUtils.isEmpty(searchKwd) ) {
@@ -329,6 +329,7 @@ public class ESservice {
         }
         searchSourceBuilder.aggregation(aggregationBuilder);
         searchSourceBuilder.size(0);
+        System.out.println(searchSourceBuilder.toString());
 
         SearchRequest request = new SearchRequest(indexName);
         request.source(searchSourceBuilder);

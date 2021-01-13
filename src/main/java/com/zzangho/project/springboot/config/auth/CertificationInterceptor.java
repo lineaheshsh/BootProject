@@ -17,6 +17,7 @@ public class CertificationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         System.out.println("============================= 인터셉터 시작 ==============================");
+
         HttpSession session = request.getSession();
         SessionUser loginVO = (SessionUser) session.getAttribute("user");
 

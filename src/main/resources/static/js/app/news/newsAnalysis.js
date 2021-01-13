@@ -5,6 +5,13 @@ var newsAnalysis_main = {
     init : function () {
         var _this = this;
 
+        // 워드 클라우드 select box 초기화
+        $('#newsHotKeywordCategory').on('change', function () {
+            _this.initWordCloud(this.value);
+        });
+
+
+        // 분석 화면 chart draw
         _this.initPieAnalysis();
         _this.initLineAnalysis();
         _this.initWordCloud();
@@ -138,15 +145,20 @@ var newsAnalysis_main = {
         });
 
     },
-    initWordCloud : function () {
+    initWordCloud : function (value) {
         var ctx = document.getElementById("newsHotKeywordAnalysis");
+
+        var data = {
+            categoryNM: value
+        };
 
         $.ajax({
             url: '/newsHotKeyword',
             type: 'GET',
+            data: {
+                categoryNM: value == undefined ? "" : value
+            },
             success: function onData (data) {
-                console.log(data);
-
                 var _data = [];
 
                 $.each(data, function (index, item) {
@@ -180,6 +192,13 @@ var newsAnalysis_main = {
             }
         });
 
+    },
+    changeWordCloud: function (value) {
+        if ( value == "all" ) {
+
+        } else {
+
+        }
     }
 };
 
