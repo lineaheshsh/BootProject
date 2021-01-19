@@ -4,10 +4,15 @@ import com.zzangho.project.springboot.domain.common.Parameter;
 import com.zzangho.project.springboot.web.dto.news.NewsDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHost;
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.indices.alias.Alias;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -48,6 +53,7 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 @RequiredArgsConstructor
 @Service
 public class ESservice {
+
     /*
      * connection create method
      */
@@ -59,6 +65,10 @@ public class ESservice {
         );
     }
 
+    /**
+     * 인덱스 생성
+     * @param indexName
+     */
     public void createIndex(String indexName) {
         String INDEX_NAME = indexName;
 
@@ -163,6 +173,55 @@ public class ESservice {
             e.printStackTrace();
         }*/
     };
+
+    /**
+     * 인덱스 삭제
+     * @return
+     */
+    public boolean deleteIndex(String indexName) {
+        String INDEX_NAME = indexName;
+
+        DeleteIndexRequest request = new DeleteIndexRequest(INDEX_NAME);
+
+        try(RestHighLevelClient client = createConnection();){
+            AcknowledgedResponse deleteIndexResponse = client.indices().delete(request, RequestOptions.DEFAULT);
+            boolean acknowledged = deleteIndexResponse.isAcknowledged();
+            System.out.println("result :: " + acknowledged);
+            return acknowledged;
+        }catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 문서 추가
+     */
+    public void addDocument(String indexName) {
+        String INDEX_NAME = indexName;
+
+        String TYPE_NAME ="";
+
+        String _id = "1";
+
+        IndexRequest request = new IndexRequest(INDEX_NAME, TYPE_NAME, _id);
+
+        try(RestHighLevelClient client = createConnection();) {
+            request.source(jsonBuilder()
+                          .startObject()
+                          .field("aaa", "value")
+                          .field("bbb", "value")
+                          .endObject());
+
+            IndexResponse response = client.index(request, RequestOptions.DEFAULT);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("IO Error!");
+        } catch (ElasticsearchException e) {
+            e.printStackTrace();
+            System.out.println("Elasticsearch Error!");
+        }
+    }
 
     /**
      * 전체 검색
