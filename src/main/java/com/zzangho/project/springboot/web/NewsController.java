@@ -5,7 +5,9 @@ import com.zzangho.project.springboot.config.auth.dto.SessionUser;
 import com.zzangho.project.springboot.domain.common.Parameter;
 import com.zzangho.project.springboot.domain.news.News;
 import com.zzangho.project.springboot.service.elasticSearch.ESservice;
+import com.zzangho.project.springboot.service.news.qna.QnAService;
 import com.zzangho.project.springboot.web.dto.news.NewsDto;
+import com.zzangho.project.springboot.web.dto.news.QnA;
 import lombok.RequiredArgsConstructor;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -26,6 +28,8 @@ import java.util.*;
 public class NewsController {
 
     private final ESservice eSservice;
+
+    private final QnAService qnAService;
 
     @GetMapping("/newsList")
     public String newsList(@ModelAttribute NewsDto.Request parameter, Model model, @LoginUser SessionUser user) {
@@ -314,11 +318,16 @@ public class NewsController {
     @GetMapping("/newsQnA")
     public String newsQnA(@ModelAttribute Parameter parameter, Model model, @LoginUser SessionUser user) {
 
+        List<QnA.TbBoardCategoryResponseDto> categoryList = qnAService.findAll();
+
         // session값
         if ( user != null ) {
             model.addAttribute("profile", user.getPicture());   // profile 사진
             model.addAttribute("name", user.getName()); // user name
         }
+
+        model.addAttribute("categoryList", categoryList);
+        model.addAttribute("categoryTotal", categoryList.size());
 
         return "news/newsQnA";
     }
@@ -335,13 +344,39 @@ public class NewsController {
         return "news/newsQnAAdd";
     }
 
+    /**
+     * QnA 게시판 카테고리 추가
+     * @param tbBoardCategoryRequestDto
+     * @param user
+     * @return
+     */
     @PutMapping("/categoryAdd")
     @ResponseBody
-    public String categoryAdd(@RequestBody Map<String, String> categoryNM) {
-        System.out.println("categoryNM :: " + categoryNM.toString());
-        eSservice.createIndex(categoryNM.get("categoryNM"));
-        System.out.println("index End");
+    public Map<String, String> categoryAdd(@RequestBody QnA.TbBoardCategoryRequestDto tbBoardCategoryRequestDto, @LoginUser SessionUser user) {
+        System.out.println("categoryNM :: " + tbBoardCategoryRequestDto.getCategory_nm());
 
-        return "";
+        Map<String, String> resultMap = new HashMap<>();
+        String msg = "";
+
+        boolean createIndex = eSservice.createIndex(tbBoardCategoryRequestDto.getCategory_nm());
+
+        if ( createIndex ) {
+            tbBoardCategoryRequestDto.setUser_id(user.getName());
+            tbBoardCategoryRequestDto.setDel_yn("Y");
+            System.out.println("dto :: " + tbBoardCategoryRequestDto.getDel_yn());
+            Long insertId = qnAService.save(tbBoardCategoryRequestDto);
+
+            if ( insertId > 0 ) {
+                msg = "ok";
+            } else {
+                msg = "insert Failed";
+            }
+        } else {
+            msg = "index create Failed";
+        }
+
+        resultMap.put("msg", msg);
+
+        return resultMap;
     };
 }

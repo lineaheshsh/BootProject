@@ -69,7 +69,7 @@ public class ESservice {
      * 인덱스 생성
      * @param indexName
      */
-    public void createIndex(String indexName) {
+    public boolean createIndex(String indexName) {
         String INDEX_NAME = indexName;
 
         XContentBuilder settingsBuilder = null;
@@ -148,8 +148,10 @@ public class ESservice {
             CreateIndexResponse createIndexResponse = client.indices().create(request, RequestOptions.DEFAULT);
             boolean acknowledged = createIndexResponse.isAcknowledged();
             System.out.println("result :: " + acknowledged);
+            return acknowledged;
         }catch (Exception e) {
-                    e.printStackTrace();
+            e.printStackTrace();
+            return false;
         }
         /*ActionListener<CreateIndexResponse> listener = new ActionListener<CreateIndexResponse>() {
             @Override
@@ -239,7 +241,8 @@ public class ESservice {
         else
             queryBuilders.must(QueryBuilders.matchAllQuery());
 
-        queryBuilders.filter(QueryBuilders.termQuery("category_nm", category));
+        if ( category != null && !"".equals(parameter.getCompany()) )
+            queryBuilders.filter(QueryBuilders.termQuery("category_nm", category));
 
         // 신문사 옵션이 전체가 아닌경우
         if ( parameter.getCompany() != null && !"".equals(parameter.getCompany()) )

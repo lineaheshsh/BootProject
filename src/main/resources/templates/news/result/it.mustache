@@ -1,0 +1,26 @@
+<div id="itContents">
+    <h5 class="card-title" style="padding: 1.25rem;">IT/과학({{#itTotal}}{{itTotal}}{{/itTotal}}{{^itTotal}}0{{/itTotal}})</h5>
+    <div class="card-body">
+        {{#itList}}
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <div style="width: 100px; font-weight: bold;">{{company}}</div>
+                    <div class="ml-4">
+                        <div class="small"><a href="{{url}}">{{title}}</a></div>
+                        <div class="text-xs text-muted">{{domain}}</div>
+                    </div>
+                </div>
+                <div class="ml-4 small">
+                    <div class="badge badge-light mr-3">{{date}} {{ampm}} {{time}}</div>
+                </div>
+            </div>
+            <hr>
+        {{/itList}}
+        {{^itList}}
+            <div class="d-flex align-items-center justify-content-between">
+                검색 결과가 없습니다.
+            </div>
+            <hr>
+        {{/itList}}
+    </div>
+</div>

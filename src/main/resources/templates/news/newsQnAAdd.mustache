@@ -1,0 +1,75 @@
+{{>layout/header}}
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    {{>layout/left}}
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        {{>common/hiddenForm}}
+
+        <!-- Main Content -->
+        <div id="content">
+
+            {{>layout/toolbar}}
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-2 text-gray-800">Q&A 카테고리 추가</h1>
+
+                <!-- Content Row -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">카테고리 추가</h6>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <!-- Form Group (username)-->
+                            <div class="form-group">
+                                <label class="small mb-1" for="inputUsername">카테고리명</label>
+                                <input class="form-control" id="categoryNm" type="text" placeholder="Category Name">
+                            </div>
+                            <!-- Form Group (username)-->
+                            <!--<div>
+                                <label class="small mb-1" for="inputUsername">사용여부</label>
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" id="checkSmsComment" type="checkbox" checked="">
+                                    <label class="custom-control-label" for="checkSmsComment">사용</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input class="custom-control-input" id="checkSmsComment" type="checkbox" checked="">
+                                    <label class="custom-control-label" for="checkSmsComment">사용안함</label>
+                                </div>
+                            </div>-->
+                            <!-- Save changes button-->
+                            <button class="btn btn-danger" id="cancle" type="button" style="float: right;">취소</button>
+                            <button class="btn btn-primary" id="add" type="button" style="float: right;">저장</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+{{>layout/footer}}
+<script src="/js/app/news/newsQnA.js"></script>
