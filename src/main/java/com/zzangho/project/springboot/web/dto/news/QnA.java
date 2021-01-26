@@ -67,4 +67,36 @@ public class QnA {
             this.del_yn = entity.getDel_yn();
         }
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class TbBoardRequestDto {
+        private int seq;
+        private String board_id;
+        private String category_nm;
+        private String contents;
+        private String kwd;
+        private String ttl;
+        private String writer;
+
+        @Builder
+        public TbBoardRequestDto(String board_id, String category_nm, String contents, String kwd, String ttl, String writer) {
+            this.board_id = board_id;
+            this.category_nm = category_nm;
+            this.contents = contents;
+            this.kwd = kwd;
+            this.ttl = ttl;
+            this.writer = writer;
+        }
+
+        /*public TbBoardCategory toEntity() {
+            return TbBoardCategory.builder()
+                    .board_id(board_id)
+                    .category_nm(category_nm)
+                    .user_id(user_id)
+                    .del_yn(del_yn)
+                    .build();
+        }*/
+    }
 }

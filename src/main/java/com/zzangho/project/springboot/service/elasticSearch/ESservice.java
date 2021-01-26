@@ -25,6 +25,7 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -199,29 +200,38 @@ public class ESservice {
     /**
      * 문서 추가
      */
-    public void addDocument(String indexName) {
+    public void addDocument(String indexName, XContentBuilder builder) {
         String INDEX_NAME = indexName;
 
         String TYPE_NAME ="";
 
-        String _id = "1";
-
-        IndexRequest request = new IndexRequest(INDEX_NAME, TYPE_NAME, _id);
+        IndexRequest request = new IndexRequest(INDEX_NAME, TYPE_NAME);
 
         try(RestHighLevelClient client = createConnection();) {
-            request.source(jsonBuilder()
+            /*request.source(jsonBuilder()
                           .startObject()
-                          .field("aaa", "value")
-                          .field("bbb", "value")
-                          .endObject());
+                          .field("board_id", "value")
+                          .field("category_nm", "value")
+                          .field("contents", "value")
+                          .field("kwd", "value")
+                          .field("seq", "value")
+                          .field("ttl", "value")
+                          .field("writer", "value")
+                          .endObject());*/
+
+            request.source(builder);
 
             IndexResponse response = client.index(request, RequestOptions.DEFAULT);
+            System.out.println("getStatus :: " + response.status().getStatus());
+            System.out.println(response.toString());
+            if ( response == null ) System.out.println("response null!");
+
         } catch (IOException e) {
-            e.printStackTrace();
             System.out.println("IO Error!");
         } catch (ElasticsearchException e) {
-            e.printStackTrace();
-            System.out.println("Elasticsearch Error!");
+            if ( e.status() == RestStatus.CONFLICT) {
+                System.out.println("[Elasticsearch Error] 문서 생성에 실패하였습니다.");
+            }
         }
     }
 

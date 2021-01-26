@@ -1,0 +1,92 @@
+{{>layout/header}}
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    {{>layout/left}}
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        {{>common/hiddenForm}}
+
+        <!-- Main Content -->
+        <div id="content">
+
+            {{>layout/toolbar}}
+
+            <div class="container-fluid">
+
+                <!-- Page Heading -->
+                <h1 class="h3 mb-2 text-gray-800">Q&A 카테고리 관리</h1>
+
+                <!-- Content Row -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">카테고리 조회</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                                            <thead>
+                                                <tr role="row">
+                                                    <th class="sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" style="width: 100px;">Num</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 200px;">카테고리</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 137px;">등록자</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 100px;">사용여부</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 130px;">등록일</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 130px;">수정일</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{#categoryList}}
+                                                <tr role="row" class="odd">
+                                                    <td class="sorting_1">{{seq}}</td>
+                                                    <td>{{category_nm}}</td>
+                                                    <td>{{user_id}}</td>
+                                                    <td>{{del_yn}}</td>
+                                                    <td>{{reg_dt}}</td>
+                                                    <td>{{udt_dt}}</td>
+                                                </tr>
+                                                {{/categoryList}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <a href="/qna/categoryAdd" class="btn btn-primary btn-icon-split">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                            <span class="text">추가</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2020</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+{{>layout/footer}}
