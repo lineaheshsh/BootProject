@@ -2,6 +2,7 @@ package com.zzangho.project.springboot.service.elasticSearch;
 
 import com.zzangho.project.springboot.domain.common.Parameter;
 import com.zzangho.project.springboot.web.dto.news.NewsDto;
+import com.zzangho.project.springboot.web.dto.news.QnA;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHost;
 import org.elasticsearch.ElasticsearchException;
@@ -109,9 +110,6 @@ public class ESservice {
                                                             .startObject("seq")
                                                                 .field("type", "byte")
                                                             .endObject()
-                                                            .startObject("board_id")
-                                                                .field("type", "keyword")
-                                                            .endObject()
                                                             .startObject("category_nm")
                                                                 .field("type", "keyword")
                                                             .endObject()
@@ -127,6 +125,12 @@ public class ESservice {
                                                                 .field("type", "keyword")
                                                             .endObject()
                                                             .startObject("kwd")
+                                                                .field("type", "keyword")
+                                                            .endObject()
+                                                            .startObject("reg_dt")
+                                                                .field("type", "keyword")
+                                                            .endObject()
+                                                            .startObject("udt_dt")
                                                                 .field("type", "keyword")
                                                             .endObject()
                                                         .endObject()
@@ -200,43 +204,35 @@ public class ESservice {
     /**
      * 문서 추가
      */
-    public void addDocument(String indexName, XContentBuilder builder) {
+    public boolean addDocument(String indexName, XContentBuilder builder) {
         String INDEX_NAME = indexName;
 
-        String TYPE_NAME ="";
+        String TYPE_NAME ="_doc";
 
         IndexRequest request = new IndexRequest(INDEX_NAME, TYPE_NAME);
 
         try(RestHighLevelClient client = createConnection();) {
-            /*request.source(jsonBuilder()
-                          .startObject()
-                          .field("board_id", "value")
-                          .field("category_nm", "value")
-                          .field("contents", "value")
-                          .field("kwd", "value")
-                          .field("seq", "value")
-                          .field("ttl", "value")
-                          .field("writer", "value")
-                          .endObject());*/
 
             request.source(builder);
 
             IndexResponse response = client.index(request, RequestOptions.DEFAULT);
-            System.out.println("getStatus :: " + response.status().getStatus());
-            System.out.println(response.toString());
-            if ( response == null ) System.out.println("response null!");
+
+            if ( response != null && response.status().getStatus() == 201 ) return true;
+            else return false;
 
         } catch (IOException e) {
             System.out.println("IO Error!");
+            return false;
         } catch (ElasticsearchException e) {
             if ( e.status() == RestStatus.CONFLICT) {
                 System.out.println("[Elasticsearch Error] 문서 생성에 실패하였습니다.");
             }
+            return false;
         }
     }
 
     /**
-     * 전체 검색
+     * 뉴스 전체 검색
      * @param indexName 인덱스명
      * @param parameter   파라메터
      * @return  SearchHits
@@ -269,6 +265,47 @@ public class ESservice {
         } else {
             searchSourceBuilder.sort(new FieldSortBuilder("udt_dt").order(SortOrder.DESC));
         }
+
+        System.out.println(searchSourceBuilder.toString());
+
+        SearchRequest request = new SearchRequest(indexName);
+        request.source(searchSourceBuilder);
+
+        SearchResponse response = null;
+        SearchHits searchHits = null;
+
+        try(RestHighLevelClient client = createConnection();){
+
+            response = client.search(request, RequestOptions.DEFAULT);
+            searchHits = response.getHits();
+
+        }catch (Exception e) {
+            /*
+             * 예외처리
+             */
+            e.printStackTrace();
+            return null;
+        }
+
+        return searchHits;
+    }
+
+    /**
+     * qna 전체 검색
+     * @param indexName 인덱스명
+     * @param parameter   파라메터
+     * @return  SearchHits
+     */
+    public SearchHits qnaSearch(String indexName, QnA.TbBoardRequestDto parameter) {
+
+        BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery();
+
+        queryBuilders.must(QueryBuilders.matchAllQuery());
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(queryBuilders);
+        searchSourceBuilder.from(0);
+        searchSourceBuilder.size(10);
 
         System.out.println(searchSourceBuilder.toString());
 

@@ -1,13 +1,13 @@
 package com.zzangho.project.springboot.web.dto.news;
 
 import com.zzangho.project.springboot.domain.posts.Posts;
+import com.zzangho.project.springboot.domain.qna.TbBoard;
 import com.zzangho.project.springboot.domain.qna.TbBoardCategory;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 /**
  * QnA DTO 클래스
@@ -28,7 +28,7 @@ public class QnA {
         private String del_yn;
 
         @Builder
-        public TbBoardCategoryRequestDto(String category_id, String category_nm, String user_id, String reg_dt, String udt_dt, String del_yn) {
+        public TbBoardCategoryRequestDto(String category_id, String category_nm, String user_id) {
             this.category_id = category_id;
             this.category_nm = category_nm;
             this.user_id = user_id;
@@ -36,8 +36,8 @@ public class QnA {
 
         public TbBoardCategory toEntity() {
             return TbBoardCategory.builder()
-                    .category_id(category_id)
-                    .category_nm(category_nm)
+                    .categoryId(category_id)
+                    .categoryNm(category_nm)
                     .user_id(user_id)
                     .del_yn(del_yn)
                     .build();
@@ -59,8 +59,8 @@ public class QnA {
         @Builder
         public TbBoardCategoryResponseDto(TbBoardCategory entity) {
             this.seq = entity.getSeq();
-            this.category_id = entity.getCategory_id();
-            this.category_nm = entity.getCategory_nm();
+            this.category_id = entity.getCategoryId();
+            this.category_nm = entity.getCategoryNm();
             this.user_id = entity.getUser_id();
             this.reg_dt = entity.getReg_dt();
             this.udt_dt = entity.getUdt_dt();
@@ -68,35 +68,60 @@ public class QnA {
         }
     }
 
+    ///////////////////////////////////////////////////////////////// Board
     @Getter
     @Setter
     @NoArgsConstructor
     public static class TbBoardRequestDto {
-        private int seq;
-        private String board_id;
-        private String category_nm;
+        private String category_id;
         private String contents;
         private String kwd;
         private String ttl;
         private String writer;
 
         @Builder
-        public TbBoardRequestDto(String board_id, String category_nm, String contents, String kwd, String ttl, String writer) {
-            this.board_id = board_id;
-            this.category_nm = category_nm;
+        public TbBoardRequestDto(String category_id, String contents, String kwd, String ttl, String writer) {
+            this.category_id = category_id;
             this.contents = contents;
             this.kwd = kwd;
             this.ttl = ttl;
             this.writer = writer;
         }
 
-        /*public TbBoardCategory toEntity() {
-            return TbBoardCategory.builder()
-                    .board_id(board_id)
-                    .category_nm(category_nm)
-                    .user_id(user_id)
-                    .del_yn(del_yn)
+        public TbBoard toEntity() {
+            LocalDateTime date = LocalDateTime.now();
+
+            return TbBoard.builder()
+                    .category_id(category_id)
+                    .contents(contents)
+                    .ttl(ttl)
+                    .writer(writer)
+                    .reg_dt(date)
+                    .udt_dt(date)
                     .build();
-        }*/
+        }
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class TbBoardResponseDto {
+        private int returnCode;
+        private String returnMessage;
+        private List<TbBoardInfoDto> result;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class TbBoardInfoDto {
+        private Long seq;
+        private String category_id;
+        private String contents;
+        private String kwd;
+        private String ttl;
+        private String writer;
+        private String reg_dt;
+        private String udt_dt;
     }
 }

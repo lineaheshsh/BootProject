@@ -22,7 +22,7 @@
                 <!-- Content Row -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">카테고리 조회</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">게시판 조회</h6>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -33,24 +33,24 @@
                                             <thead>
                                                 <tr role="row">
                                                     <th class="sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" style="width: 100px;">Num</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 200px;">카테고리</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 200px;">제목</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 137px;">등록자</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 100px;">사용여부</th>
-                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 130px;">등록일</th>
+                                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 130px;">키워드</th>
                                                     <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" style="width: 130px;">수정일</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {{#categoryList}}
-                                                <tr role="row" class="odd">
-                                                    <td class="sorting_1">{{seq}}</td>
-                                                    <td>{{category_nm}}</td>
-                                                    <td>{{user_id}}</td>
-                                                    <td>{{del_yn}}</td>
-                                                    <td>{{reg_dt}}</td>
-                                                    <td>{{udt_dt}}</td>
-                                                </tr>
-                                                {{/categoryList}}
+                                                {{#response}}
+                                                    {{#result}}
+                                                        <tr role="row" class="odd">
+                                                            <td class="sorting_1">{{#seq}}{{seq}}{{/seq}}</td>
+                                                            <td>{{#ttl}}{{ttl}}{{/ttl}}</td>
+                                                            <td>{{#writer}}{{writer}}{{/writer}}</td>
+                                                            <td>{{#kwd}}{{kwd}}{{/kwd}}</td>
+                                                            <td>{{#udt_dt}}{{udt_dt}}{{/udt_dt}}</td>
+                                                        </tr>
+                                                    {{/result}}
+                                                {{/response}}
                                             </tbody>
                                         </table>
                                     </div>
