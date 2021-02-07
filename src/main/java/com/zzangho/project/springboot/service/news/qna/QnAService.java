@@ -158,7 +158,7 @@ public class QnAService {
             code = 200;
             message = "ok";
         } else {
-            code = 500;
+            code = -1;
             message = "[Error] elastic search is alive?";
         }
 

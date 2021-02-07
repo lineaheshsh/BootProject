@@ -46,7 +46,7 @@ var newsQnA_main = {
         }
 
         $.ajax({
-            url: '/qna/qnaAdd',
+            url: '/qna/board',
             type: 'PUT',
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',

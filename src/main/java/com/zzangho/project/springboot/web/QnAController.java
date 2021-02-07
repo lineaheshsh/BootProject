@@ -103,8 +103,8 @@ public class QnAController {
         return resultMap;
     };
 
-    @GetMapping("/qnaList")
-    public String qnaList(@ModelAttribute QnA.TbBoardRequestDto tbBoardRequestDto, Model model, @LoginUser SessionUser user) {
+    @GetMapping("/board")
+    public String boardList(@ModelAttribute QnA.TbBoardRequestDto tbBoardRequestDto, Model model, @LoginUser SessionUser user) {
 
         // qna 데이터 가져오기
         QnA.TbBoardResponseDto response = qnAService.qnaList(tbBoardRequestDto);
@@ -120,18 +120,23 @@ public class QnAController {
         return "qna/qnaList";
     };
 
+    /**
+     * 게시판 등록페이지
+     * @param model
+     * @param user
+     * @return
+     */
     @GetMapping("/qnaAdd")
-    public String qnaAdd(@ModelAttribute Parameter parameter, Model model, @LoginUser SessionUser user) {
+    public String qnaAdd(Model model, @LoginUser SessionUser user) {
 
         List<QnA.TbBoardCategoryResponseDto> categoryList = qnAService.findAll();
+        model.addAttribute("categoryList", categoryList);
 
         // session값
         if ( user != null ) {
             model.addAttribute("profile", user.getPicture());   // profile 사진
             model.addAttribute("name", user.getName()); // user name
         }
-
-        model.addAttribute("categoryList", categoryList);
 
         return "qna/qnaAdd";
     }
@@ -142,7 +147,7 @@ public class QnAController {
      * @param user
      * @return
      */
-    @PutMapping("/qnaAdd")
+    @PutMapping("/board")
     @ResponseBody
     public Map<String, String> qnaAddDocument(@RequestBody QnA.TbBoardRequestDto tbBoardRequestDto, @LoginUser SessionUser user) {
 
@@ -165,5 +170,28 @@ public class QnAController {
         resultMap.put("msg", msg);
 
         return resultMap;
+    }
+
+    /**
+     * 게시판 수정페이지
+     * @param model
+     * @param user
+     * @return
+     */
+    @GetMapping("/board/{seq}")
+    public String qnaAdd(@PathVariable Long seq, Model model, @LoginUser SessionUser user) {
+
+        List<QnA.TbBoardCategoryResponseDto> categoryList = qnAService.findAll();
+
+
+        model.addAttribute("categoryList", categoryList);
+
+        // session값
+        if ( user != null ) {
+            model.addAttribute("profile", user.getPicture());   // profile 사진
+            model.addAttribute("name", user.getName()); // user name
+        }
+
+        return "qna/boardEdit";
     }
 }

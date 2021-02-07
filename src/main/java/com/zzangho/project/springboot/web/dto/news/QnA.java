@@ -73,6 +73,7 @@ public class QnA {
     @Setter
     @NoArgsConstructor
     public static class TbBoardRequestDto {
+        private Long seq;
         private String category_id;
         private String contents;
         private String kwd;
@@ -80,7 +81,8 @@ public class QnA {
         private String writer;
 
         @Builder
-        public TbBoardRequestDto(String category_id, String contents, String kwd, String ttl, String writer) {
+        public TbBoardRequestDto(Long seq, String category_id, String contents, String kwd, String ttl, String writer) {
+            this.seq = seq;
             this.category_id = category_id;
             this.contents = contents;
             this.kwd = kwd;

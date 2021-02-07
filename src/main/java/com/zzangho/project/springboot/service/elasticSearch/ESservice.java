@@ -300,7 +300,10 @@ public class ESservice {
 
         BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery();
 
-        queryBuilders.must(QueryBuilders.matchAllQuery());
+        if ( parameter.getKwd() != null && !"".equals(parameter.getKwd()) )
+            queryBuilders.must(QueryBuilders.termQuery("seq", parameter.getSeq()));
+        else
+            queryBuilders.must(QueryBuilders.matchAllQuery());
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(queryBuilders);
