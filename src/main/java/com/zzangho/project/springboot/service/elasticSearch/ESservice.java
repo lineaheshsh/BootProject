@@ -14,6 +14,8 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -232,6 +234,39 @@ public class ESservice {
     }
 
     /**
+     * 문서 수정
+     * @param indexName
+     * @param builder
+     * @return
+     */
+    public boolean updateDocument(String indexName, Long seq, XContentBuilder builder) {
+        String INDEX_NAME = indexName;
+
+        String TYPE_NAME ="_doc";
+
+        UpdateRequest request = new UpdateRequest(INDEX_NAME, TYPE_NAME, "de6UWHcBJQ0va7gUu9_m");
+
+        try(RestHighLevelClient client = createConnection();) {
+
+            request.doc(builder);
+
+            UpdateResponse response = client.update(request, RequestOptions.DEFAULT);
+
+            if ( response != null && response.status().getStatus() == 201 ) return true;
+            else return false;
+
+        } catch (IOException e) {
+            System.out.println("IO Error!");
+            return false;
+        } catch (ElasticsearchException e) {
+            if ( e.status() == RestStatus.CONFLICT) {
+                System.out.println("[Elasticsearch Error] 문서 수정이 실패하였습니다.");
+            }
+            return false;
+        }
+    }
+
+    /**
      * 뉴스 전체 검색
      * @param indexName 인덱스명
      * @param parameter   파라메터
@@ -300,7 +335,7 @@ public class ESservice {
 
         BoolQueryBuilder queryBuilders = QueryBuilders.boolQuery();
 
-        if ( parameter.getKwd() != null && !"".equals(parameter.getKwd()) )
+        if ( parameter.getSeq() != null && !"".equals(parameter.getSeq()) )
             queryBuilders.must(QueryBuilders.termQuery("seq", parameter.getSeq()));
         else
             queryBuilders.must(QueryBuilders.matchAllQuery());

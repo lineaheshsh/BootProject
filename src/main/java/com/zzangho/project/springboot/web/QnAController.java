@@ -103,6 +103,8 @@ public class QnAController {
         return resultMap;
     };
 
+    /////////////////////////////////////////////////////////////////////////////////////// board
+
     @GetMapping("/board")
     public String boardList(@ModelAttribute QnA.TbBoardRequestDto tbBoardRequestDto, Model model, @LoginUser SessionUser user) {
 
@@ -126,7 +128,7 @@ public class QnAController {
      * @param user
      * @return
      */
-    @GetMapping("/qnaAdd")
+    @GetMapping("/board/new")
     public String qnaAdd(Model model, @LoginUser SessionUser user) {
 
         List<QnA.TbBoardCategoryResponseDto> categoryList = qnAService.findAll();
@@ -147,7 +149,7 @@ public class QnAController {
      * @param user
      * @return
      */
-    @PutMapping("/board")
+    @PostMapping("/board")
     @ResponseBody
     public Map<String, String> qnaAddDocument(@RequestBody QnA.TbBoardRequestDto tbBoardRequestDto, @LoginUser SessionUser user) {
 
@@ -173,7 +175,7 @@ public class QnAController {
     }
 
     /**
-     * 게시판 수정페이지
+     * 게시판 상세 조회 페이지
      * @param model
      * @param user
      * @return
@@ -181,10 +183,14 @@ public class QnAController {
     @GetMapping("/board/{seq}")
     public String qnaAdd(@PathVariable Long seq, Model model, @LoginUser SessionUser user) {
 
+        // qna 카테고리 데이터 가져오기
         List<QnA.TbBoardCategoryResponseDto> categoryList = qnAService.findAll();
 
+        // qna 데이터 가져오기
+        QnA.TbBoardRequestDto tbBoardRequestDto = new QnA.TbBoardRequestDto();
+        tbBoardRequestDto.setSeq(seq);
 
-        model.addAttribute("categoryList", categoryList);
+        QnA.TbBoardResponseDto response = qnAService.findByBoardId(tbBoardRequestDto);
 
         // session값
         if ( user != null ) {
@@ -192,6 +198,34 @@ public class QnAController {
             model.addAttribute("name", user.getName()); // user name
         }
 
+        model.addAttribute("categoryList", categoryList);
+        model.addAttribute("response", response);
+
         return "qna/boardEdit";
+    }
+
+    @PutMapping("/board")
+    @ResponseBody
+    public Map<String, String> qnaEditDocument(@RequestBody QnA.TbBoardRequestDto tbBoardRequestDto, @LoginUser SessionUser user) {
+
+        Map<String, String> resultMap = new HashMap<>();
+        String msg = "";
+
+        // 카테고리 정보를 가져오기 위해 category_id로 조회
+        QnA.TbBoardCategoryResponseDto responseDto = qnAService.findById(tbBoardRequestDto.getCategory_id());
+        System.out.println(">>>>>>>>>>>>>>>>> " + responseDto.getCategory_nm());
+
+        tbBoardRequestDto.setWriter(user.getName());
+        boolean isUpdate = qnAService.updateDocument(responseDto.getCategory_nm(), tbBoardRequestDto);
+
+        if ( isUpdate ) {
+            msg = "ok";
+        } else {
+            msg = "Update Document Fail";
+        }
+
+        resultMap.put("msg", msg);
+
+        return resultMap;
     }
 }

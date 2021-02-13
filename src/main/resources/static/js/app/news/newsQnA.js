@@ -11,6 +11,21 @@ var newsQnA_main = {
         $('#qnaAdd').on('click', function () {
             _this.qnaAdd();
         });
+
+        // 게시판 수정 버튼 클릭
+        $('#boardEdit').on('click', function () {
+           _this.qnaEdit();
+        });
+
+        // 게시판 저장 버튼 클릭
+        $('#boardSave').on('click', function () {
+           _this.qnaSave();
+        });
+
+        // 취소 버튼
+        $('#boardCancel').on('click', function () {
+            location.href = "/qna/board";
+        });
     },
     categoryAdd : function () {
 
@@ -47,7 +62,7 @@ var newsQnA_main = {
 
         $.ajax({
             url: '/qna/board',
-            type: 'PUT',
+            type: 'POST',
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
@@ -57,6 +72,44 @@ var newsQnA_main = {
                 location.href = "qnaList";
             } else {
                 alert('Q&A 게시글 등록 실패!');
+            }
+
+        }).fail(function (error) {
+            alert(JSON.stringify(error));
+        });
+    },
+    qnaEdit: function () {
+
+        $('#boardCategory').attr('disabled', false);
+        $('#boardTTL').attr('disabled', false);
+        $('#boardContents').attr('disabled', false);
+
+        $('#boardSubject').innerText = "Q&A 게시글 수정";
+
+        $('#boardEdit').css('display', 'none');
+        $('#boardSave').css('display', 'block');
+    },
+    qnaSave: function () {
+
+        var data = {
+            'seq': $('#boardSeq').val(),
+            'ttl': $('#boardTTL').val(),
+            'contents': $('#boardContents').val(),
+            'category_id': $('#boardCategory option:selected').val()
+        }
+
+        $.ajax({
+            url: '/qna/board',
+            type: 'PUT',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data)
+        }).done(function (data) {
+            if ( data.msg == "ok" ) {
+                alert('Q&A 게시글이 수정 되었습니다');
+                location.href = "/qna/board";
+            } else {
+                alert('Q&A 게시글 수정 실패!');
             }
 
         }).fail(function (error) {

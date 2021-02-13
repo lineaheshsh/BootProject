@@ -49,4 +49,10 @@ public class TbBoard {
         this.udt_dt = udt_dt;
         this.del_yn = del_yn;
     }
+
+    public void update(String category_id, String ttl, String contents) {
+        this.category_id = category_id;
+        this.ttl = ttl;
+        this.contents = contents;
+    }
 }

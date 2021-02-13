@@ -81,6 +81,12 @@ public class QnAService {
         return new QnA.TbBoardCategoryResponseDto(entity);
     }
 
+    /**
+     * qna 게시판 데이터 추가
+     * @param category_nm
+     * @param tbBoardRequestDto
+     * @return
+     */
     @Transactional
     public boolean addDocument(String category_nm, QnA.TbBoardRequestDto tbBoardRequestDto) {
 
@@ -99,16 +105,16 @@ public class QnAService {
 
                 try {
                     XContentBuilder builder = jsonBuilder()
-                                                        .startObject()
-                                                            .field("seq", tbBoard.get().getSeq())
-                                                            .field("category_nm", category_nm)
-                                                            .field("contents", tbBoard.get().getContents())
-                                                            .field("kwd", tbBoard.get().getKwd())
-                                                            .field("ttl", tbBoard.get().getTtl())
-                                                            .field("writer", tbBoard.get().getWriter())
-                                                            .field("reg_dt", tbBoard.get().getReg_dt())
-                                                            .field("udt_dt", tbBoard.get().getUdt_dt())
-                                                        .endObject();
+                                                .startObject()
+                                                    .field("seq", tbBoard.get().getSeq())
+                                                    .field("category_nm", category_nm)
+                                                    .field("contents", tbBoard.get().getContents())
+                                                    .field("kwd", tbBoard.get().getKwd())
+                                                    .field("ttl", tbBoard.get().getTtl())
+                                                    .field("writer", tbBoard.get().getWriter())
+                                                    .field("reg_dt", tbBoard.get().getReg_dt())
+                                                    .field("udt_dt", tbBoard.get().getUdt_dt())
+                                                .endObject();
 
                     System.out.println("addDocument Start");
                     eSservice.addDocument(category_nm, builder);
@@ -126,13 +132,90 @@ public class QnAService {
 
     }
 
+    @Transactional
+    public boolean updateDocument(String category_nm, QnA.TbBoardRequestDto tbBoardRequestDto) {
+
+        boolean isUpdate = false;
+
+        System.out.println("tbBoardRepository update start");
+        Optional<TbBoard> selBoard = tbBoardRepository.findById(tbBoardRequestDto.getSeq());
+
+        selBoard.ifPresent(board -> {
+            board.update(tbBoardRequestDto.getCategory_id(), tbBoardRequestDto.getTtl(), tbBoardRequestDto.getContents());
+        });
+
+        try {
+            XContentBuilder builder = jsonBuilder()
+                    .startObject()
+                    .field("category_nm", category_nm)
+                    .field("contents", tbBoardRequestDto.getContents())
+                    .field("ttl", tbBoardRequestDto.getTtl())
+                    .endObject();
+
+            System.out.println("updateDocument Start");
+            eSservice.updateDocument(category_nm, tbBoardRequestDto.getSeq(), builder);
+            isUpdate = true;
+            System.out.println("updateDocument End");
+
+            return isUpdate;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return isUpdate;
+
+    }
+
     public QnA.TbBoardResponseDto qnaList(QnA.TbBoardRequestDto tbBoardRequestDto) {
 
         QnA.TbBoardResponseDto response = new QnA.TbBoardResponseDto();
         String message = "";
         int code = 0;
 
-        SearchHits searchHits =  eSservice.qnaSearch("alias_qna_category", tbBoardRequestDto);
+        SearchHits searchHits = eSservice.qnaSearch("alias_qna_category", tbBoardRequestDto);
+
+        List<QnA.TbBoardInfoDto> list = new ArrayList<>();
+        for (SearchHit searchHit : searchHits) {
+            Map<String, Object> sourceAsMap = searchHit.getSourceAsMap();
+
+            QnA.TbBoardInfoDto tbBoardInfoDto = QnA.TbBoardInfoDto.builder()
+                    .category_id(String.valueOf(sourceAsMap.get("category_nm")))
+                    .ttl((String) sourceAsMap.get("ttl"))
+                    .contents((String) sourceAsMap.get("contents"))
+                    .writer((String) sourceAsMap.get("writer"))
+                    .kwd("lee")
+                    .seq(Long.valueOf((Integer) sourceAsMap.get("seq")))
+                    .reg_dt((String) sourceAsMap.get("reg_dt"))
+                    .udt_dt((String) sourceAsMap.get("udt_dt"))
+                    .build();
+
+            list.add(tbBoardInfoDto);
+            tbBoardInfoDto = null;
+        }
+
+        if ( !list.isEmpty() ) {
+            response.setResult(list);
+            code = 200;
+            message = "ok";
+        } else {
+            code = -1;
+            message = "[Error] elastic search is alive?";
+        }
+
+        response.setReturnCode(code);
+        response.setReturnMessage(message);
+
+        return response;
+    }
+
+    public QnA.TbBoardResponseDto findByBoardId(QnA.TbBoardRequestDto tbBoardRequestDto) {
+        QnA.TbBoardResponseDto response = new QnA.TbBoardResponseDto();
+        String message = "";
+        int code = 0;
+
+        System.out.println("seq :: " + tbBoardRequestDto.getSeq());
+
+        SearchHits searchHits = eSservice.qnaSearch("alias_qna_category", tbBoardRequestDto);
 
         List<QnA.TbBoardInfoDto> list = new ArrayList<>();
         for (SearchHit searchHit : searchHits) {

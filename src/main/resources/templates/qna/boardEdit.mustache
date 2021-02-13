@@ -17,34 +17,40 @@
             <div class="container-fluid">
 
                 <!-- Page Heading -->
-                <h1 class="h3 mb-2 text-gray-800">Q&A 게시글 수정</h1>
+                <h1 class="h3 mb-2 text-gray-800" id="boardSubject">Q&A 게시글 조회</h1>
 
                 <!-- Content Row -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">카테고리 추가</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">상세 조회</h6>
                     </div>
                     <div class="card-body">
                         <form>
                             <div class="form-group">
                                 <label for="exampleFormControlSelect1">카테고리</label>
-                                <select class="form-control" id="boardCategory">
+                                <select class="form-control" id="boardCategory" disabled>
                                 {{#categoryList}}
                                     <option value="{{category_id}}">{{category_nm}}</option>
                                 {{/categoryList}}
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label class="small mb-1" for="inputUsername">제목</label>
-                                <input class="form-control" id="boardTTL" type="text">
-                            </div>
-                            <div class="form-group">
-                                <label class="small mb-1" for="inputUsername">본문</label>
-                                <textarea class="form-control" id="boardContents" rows="10"></textarea>
-                            </div>
+                            {{#response}}
+                                {{#result}}
+                                    <input type="hidden" id="boardSeq" value="{{#seq}}{{seq}}{{/seq}}">
+                                    <div class="form-group">
+                                        <label class="small mb-1" for="inputUsername">제목</label>
+                                        <input class="form-control" id="boardTTL" type="text" value="{{#ttl}}{{ttl}}{{/ttl}}" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="small mb-1" for="inputUsername">본문</label>
+                                        <textarea class="form-control" id="boardContents" rows="10" disabled>{{#contents}}{{contents}}{{/contents}}</textarea>
+                                    </div>
+                                {{/result}}
+                            {{/response}}
                             <!-- Save changes button-->
-                            <button class="btn btn-danger" id="cancle" type="button" style="float: right;">취소</button>
-                            <button class="btn btn-primary" id="qnaAdd" type="button" style="float: right;">저장</button>
+                            <button class="btn btn-danger" id="boardCancel" type="button" style="float: right;">취소</button>
+                            <button class="btn btn-primary" id="boardEdit" type="button" style="float: right;">수정</button>
+                            <button class="btn btn-primary" id="boardSave" type="button" style="float: right; display: none;">저장</button>
                         </form>
                     </div>
                 </div>
