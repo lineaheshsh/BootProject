@@ -153,7 +153,7 @@ public class QnAService {
                     .endObject();
 
             System.out.println("updateDocument Start");
-            eSservice.updateDocument(category_nm, tbBoardRequestDto.getSeq(), builder);
+            eSservice.updateDocument(category_nm, tbBoardRequestDto.getDoc_id(), builder);
             isUpdate = true;
             System.out.println("updateDocument End");
 
@@ -230,6 +230,7 @@ public class QnAService {
                     .seq(Long.valueOf((Integer) sourceAsMap.get("seq")))
                     .reg_dt((String) sourceAsMap.get("reg_dt"))
                     .udt_dt((String) sourceAsMap.get("udt_dt"))
+                    .doc_id(searchHit.getId())
                     .build();
 
             list.add(tbBoardInfoDto);
@@ -249,5 +250,19 @@ public class QnAService {
         response.setReturnMessage(message);
 
         return response;
+    }
+
+    @Transactional
+    public boolean deleteDocument(QnA.TbBoardRequestDto tbBoardRequestDto) {
+
+        boolean isDelete = false;
+
+        System.out.println("tbBoardRepository delete start");
+        tbBoardRepository.deleteById(tbBoardRequestDto.getSeq());
+        System.out.println("tbBoardRepository delete end");
+
+        isDelete = eSservice.deleteDocument("alias_qna_category", tbBoardRequestDto.getDoc_id());
+
+        return isDelete;
     }
 }

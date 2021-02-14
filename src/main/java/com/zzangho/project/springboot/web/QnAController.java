@@ -204,6 +204,12 @@ public class QnAController {
         return "qna/boardEdit";
     }
 
+    /**
+     * 게시판 데이터 수정
+     * @param tbBoardRequestDto
+     * @param user
+     * @return
+     */
     @PutMapping("/board")
     @ResponseBody
     public Map<String, String> qnaEditDocument(@RequestBody QnA.TbBoardRequestDto tbBoardRequestDto, @LoginUser SessionUser user) {
@@ -222,6 +228,27 @@ public class QnAController {
             msg = "ok";
         } else {
             msg = "Update Document Fail";
+        }
+
+        resultMap.put("msg", msg);
+
+        return resultMap;
+    }
+
+    @DeleteMapping("/board")
+    @ResponseBody
+    public Map<String, String> qnaDeleteDocument(@RequestBody QnA.TbBoardRequestDto tbBoardRequestDto, @LoginUser SessionUser user) {
+
+        Map<String, String> resultMap = new HashMap<>();
+        String msg = "";
+
+        boolean isDelete = qnAService.deleteDocument(tbBoardRequestDto);
+        System.out.println("isDelete :: " + isDelete);
+
+        if ( isDelete ) {
+            msg = "ok";
+        } else {
+            msg = "Delete Document Fail";
         }
 
         resultMap.put("msg", msg);

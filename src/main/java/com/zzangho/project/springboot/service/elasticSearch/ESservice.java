@@ -9,6 +9,8 @@ import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.admin.indices.alias.Alias;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -239,12 +241,12 @@ public class ESservice {
      * @param builder
      * @return
      */
-    public boolean updateDocument(String indexName, Long seq, XContentBuilder builder) {
+    public boolean updateDocument(String indexName, String docId, XContentBuilder builder) {
         String INDEX_NAME = indexName;
 
         String TYPE_NAME ="_doc";
 
-        UpdateRequest request = new UpdateRequest(INDEX_NAME, TYPE_NAME, "de6UWHcBJQ0va7gUu9_m");
+        UpdateRequest request = new UpdateRequest(INDEX_NAME, TYPE_NAME, docId);
 
         try(RestHighLevelClient client = createConnection();) {
 
@@ -261,6 +263,39 @@ public class ESservice {
         } catch (ElasticsearchException e) {
             if ( e.status() == RestStatus.CONFLICT) {
                 System.out.println("[Elasticsearch Error] 문서 수정이 실패하였습니다.");
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 문서 삭제
+     * @param indexName
+     * @param docId
+     * @return
+     */
+    public boolean deleteDocument(String indexName, String docId) {
+        String INDEX_NAME = indexName;
+
+        String TYPE_NAME ="_doc";
+
+        DeleteRequest request = new DeleteRequest(INDEX_NAME, TYPE_NAME, docId);
+
+        try(RestHighLevelClient client = createConnection();) {
+
+            DeleteResponse response = client.delete(request, RequestOptions.DEFAULT);
+            System.out.println("response :: " + response.toString());
+            System.out.println("response code :: " + response.status().getStatus());
+
+            if ( response != null && response.status().getStatus() == 200 ) return true;
+            else return false;
+
+        } catch (IOException e) {
+            System.out.println("IO Error!");
+            return false;
+        } catch (ElasticsearchException e) {
+            if ( e.status() == RestStatus.CONFLICT) {
+                System.out.println("[Elasticsearch Error] 문서 삭제가 실패하였습니다.");
             }
             return false;
         }

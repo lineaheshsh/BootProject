@@ -22,6 +22,11 @@ var newsQnA_main = {
            _this.qnaSave();
         });
 
+        // 게시판 삭제 버튼 클릭
+        $('#boardDelete').on('click', function () {
+            _this.qnaDelete();
+        });
+
         // 취소 버튼
         $('#boardCancel').on('click', function () {
             location.href = "/qna/board";
@@ -69,7 +74,7 @@ var newsQnA_main = {
         }).done(function (data) {
             if ( data.msg == "ok" ) {
                 alert('Q&A 게시글이 등록 되었습니다');
-                location.href = "qnaList";
+                location.href = "/qna/board";
             } else {
                 alert('Q&A 게시글 등록 실패!');
             }
@@ -95,7 +100,8 @@ var newsQnA_main = {
             'seq': $('#boardSeq').val(),
             'ttl': $('#boardTTL').val(),
             'contents': $('#boardContents').val(),
-            'category_id': $('#boardCategory option:selected').val()
+            'category_id': $('#boardCategory option:selected').val(),
+            'doc_id': $('#boardDocId').val()
         }
 
         $.ajax({
@@ -110,6 +116,31 @@ var newsQnA_main = {
                 location.href = "/qna/board";
             } else {
                 alert('Q&A 게시글 수정 실패!');
+            }
+
+        }).fail(function (error) {
+            alert(JSON.stringify(error));
+        });
+    },
+    qnaDelete: function () {
+
+        var data = {
+            'seq': $('#boardSeq').val(),
+            'doc_id': $('#boardDocId').val()
+        }
+
+        $.ajax({
+            url: '/qna/board',
+            type: 'DELETE',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(data)
+        }).done(function (data) {
+            if ( data.msg == "ok" ) {
+                alert('Q&A 게시글이 삭제 되었습니다');
+                location.href = "/qna/board";
+            } else {
+                alert('Q&A 게시글 삭제 실패!');
             }
 
         }).fail(function (error) {

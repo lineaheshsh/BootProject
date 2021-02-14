@@ -79,15 +79,17 @@ public class QnA {
         private String kwd;
         private String ttl;
         private String writer;
+        private String doc_id;
 
         @Builder
-        public TbBoardRequestDto(Long seq, String category_id, String contents, String kwd, String ttl, String writer) {
+        public TbBoardRequestDto(Long seq, String category_id, String contents, String kwd, String ttl, String writer, String doc_id) {
             this.seq = seq;
             this.category_id = category_id;
             this.contents = contents;
             this.kwd = kwd;
             this.ttl = ttl;
             this.writer = writer;
+            this.doc_id = doc_id;
         }
 
         public TbBoard toEntity() {
@@ -125,5 +127,6 @@ public class QnA {
         private String writer;
         private String reg_dt;
         private String udt_dt;
+        private String doc_id;
     }
 }

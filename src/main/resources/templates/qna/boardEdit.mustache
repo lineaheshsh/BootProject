@@ -37,6 +37,7 @@
                             {{#response}}
                                 {{#result}}
                                     <input type="hidden" id="boardSeq" value="{{#seq}}{{seq}}{{/seq}}">
+                                    <input type="hidden" id="boardDocId" value="{{#doc_id}}{{doc_id}}{{/doc_id}}">
                                     <div class="form-group">
                                         <label class="small mb-1" for="inputUsername">제목</label>
                                         <input class="form-control" id="boardTTL" type="text" value="{{#ttl}}{{ttl}}{{/ttl}}" disabled>
@@ -51,6 +52,7 @@
                             <button class="btn btn-danger" id="boardCancel" type="button" style="float: right;">취소</button>
                             <button class="btn btn-primary" id="boardEdit" type="button" style="float: right;">수정</button>
                             <button class="btn btn-primary" id="boardSave" type="button" style="float: right; display: none;">저장</button>
+                            <button class="btn btn-danger" id="boardDelete" type="button" style="float: right;">삭제</button>
                         </form>
                     </div>
                 </div>
